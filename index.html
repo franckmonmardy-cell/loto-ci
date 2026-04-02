@@ -139,14 +139,14 @@ body{background:var(--bg);color:var(--text);font-family:system-ui,sans-serif;max
     <div style="font-size:10px;color:var(--muted);font-family:'Share Tech Mono';margin-bottom:10px;">Grille 1-90 • Appuyez pour sélectionner</div>
     <div class="matrice-grid" id="matriceGrid"></div>
     <div style="display:flex;gap:8px;margin-top:8px;flex-wrap:wrap;">
-      <div style="display:flex;align-items:center;gap:4px;font-size:9px;color:var(--red);font-family:'Share Tech Mono'"><div style="width:10px;height:10px;border-radius:2px;background:rgba(255,23,68,.3)"></div>Chaud</div>
-      <div style="display:flex;align-items:center;gap:4px;font-size:9px;color:var(--orange);font-family:'Share Tech Mono'"><div style="width:10px;height:10px;border-radius:2px;background:rgba(255,159,10,.3)"></div>Tiède</div>
-      <div style="display:flex;align-items:center;gap:4px;font-size:9px;color:var(--blue);font-family:'Share Tech Mono'"><div style="width:10px;height:10px;border-radius:2px;background:rgba(66,165,245,.2)"></div>Froid</div>
-      <div style="display:flex;align-items:center;gap:4px;font-size:9px;color:var(--green);font-family:'Share Tech Mono'"><div style="width:10px;height:10px;border-radius:2px;background:rgba(0,230,118,.2)"></div>Résultat</div>
+      <div style="display:flex;align-items:center;gap:4px;font-size:9px;color:var(--red)"><div style="width:10px;height:10px;border-radius:2px;background:rgba(255,23,68,.3)"></div>Chaud</div>
+      <div style="display:flex;align-items:center;gap:4px;font-size:9px;color:var(--orange)"><div style="width:10px;height:10px;border-radius:2px;background:rgba(255,159,10,.3)"></div>Tiède</div>
+      <div style="display:flex;align-items:center;gap:4px;font-size:9px;color:var(--blue)"><div style="width:10px;height:10px;border-radius:2px;background:rgba(66,165,245,.2)"></div>Froid</div>
+      <div style="display:flex;align-items:center;gap:4px;font-size:9px;color:var(--green)"><div style="width:10px;height:10px;border-radius:2px;background:rgba(0,230,118,.2)"></div>Résultat</div>
     </div>
   </div>
   <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px;">
-    <div style="font-family:'Bebas Neue';font-size:13px;letter-spacing:2px;color:var(--text);">MES SÉLECTIONS</div>
+    <div style="font-family:'Bebas Neue';font-size:13px;letter-spacing:2px;">MES SÉLECTIONS</div>
     <button onclick="clearSelection()" style="padding:4px 10px;background:rgba(255,23,68,.08);border:1px solid rgba(255,23,68,.25);border-radius:6px;color:var(--red);font-family:'Share Tech Mono';font-size:9px;cursor:pointer;">EFFACER</button>
   </div>
   <div id="selectionDisplay" style="background:var(--card);border:1px solid var(--border);border-radius:11px;padding:12px;margin-bottom:12px;min-height:60px;">
@@ -171,12 +171,9 @@ body{background:var(--bg);color:var(--text);font-family:system-ui,sans-serif;max
   <div style="font-family:'Bebas Neue';font-size:16px;letter-spacing:2px;color:var(--gold);margin-bottom:10px;">⚡ TURBO — 2 — 3 — 4</div>
   <div class="sec-t">⚡ TURBO (1 numéro)</div>
   <div class="turbo-grid" id="turboSection"></div>
-  <div class="sec-t">2️⃣ PARI 2</div>
-  <div id="pari2Section"></div>
-  <div class="sec-t">3️⃣ PARI 3</div>
-  <div id="pari3Section"></div>
-  <div class="sec-t">4️⃣ PARI 4</div>
-  <div id="pari4Section"></div>
+  <div class="sec-t">2️⃣ PARI 2</div><div id="pari2Section"></div>
+  <div class="sec-t">3️⃣ PARI 3</div><div id="pari3Section"></div>
+  <div class="sec-t">4️⃣ PARI 4</div><div id="pari4Section"></div>
   <div class="sp"></div>
 </div>
 <div class="pg" id="pg-stats">
@@ -242,24 +239,24 @@ const TIRAGES_LONACI=[
   {id:21,nom:'Special Weekend 3h',type:'machine',heure:'03h00',boules:[11,28,42,61,86],machine:[15,38,64],date:'Weekend'},
 ];
 
+let HISTORIQUE=[];
+let FREQ={};
+for(let i=1;i<=90;i++)FREQ[i]={digital:0,machine:0,total:0};
+
 function generateHistorique(){
   const hist=[];
   for(let i=0;i<100;i++){
     const nums=[];
     while(nums.length<5){const n=Math.floor(Math.abs(Math.sin(12345+i*17+nums.length*31))*90)+1;if(!nums.includes(n))nums.push(n);}
-    hist.push({date:new Date(Date.now()-i*86400000).toLocaleDateString('fr-FR'),boules:nums.sort((a,b)=>a-b),type:i%2===0?'digital':'machine'});
+    hist.push({boules:nums.sort((a,b)=>a-b),type:i%2===0?'digital':'machine'});
   }
   return hist;
 }
-const HISTORIQUE=generateHistorique();
 
 function calcFrequences(){
-  const freq={};
-  for(let i=1;i<=90;i++)freq[i]={digital:0,machine:0,total:0};
-  HISTORIQUE.forEach(t=>{t.boules.forEach(n=>{freq[n][t.type]++;freq[n].total++;});});
-  return freq;
+  HISTORIQUE.forEach(t=>{t.boules.forEach(n=>{if(FREQ[n]){FREQ[n][t.type]++;FREQ[n].total++;}});});
 }
-const FREQ=calcFrequences();
+
 let SELECTION=[];
 let PRONO_TYPE='digital';
 let _pronoLoaded=false,_turboLoaded=false,_statsLoaded=false;
@@ -284,7 +281,7 @@ function renderTirages(){
 function buildTirageCard(t){
   const isDigital=t.type==='digital';
   const ballColors=['ball-gold','ball-red','ball-blue','ball-green','ball-purple'];
-  const machineBalls=t.machine?t.machine.map((n,i)=>`<div class="ball ball-machine" style="width:32px;height:32px;font-size:14px;">${n}</div>`).join(''):'';
+  const machineBalls=t.machine?t.machine.map(n=>`<div class="ball ball-machine" style="width:32px;height:32px;font-size:14px;">${n}</div>`).join(''):'';
   return`<div class="tirage-card">
     <div class="tc-header">
       <div><div class="tc-name">${t.nom}</div><div class="tc-date">${t.date} • ${t.heure}</div></div>
@@ -292,8 +289,8 @@ function buildTirageCard(t){
     </div>
     <div class="tc-body">
       <div style="font-size:9px;color:var(--muted);font-family:'Share Tech Mono';margin-bottom:6px;">BOULES TIRÉES</div>
-      <div class="balls">${t.boules.map((n,i)=>`<div class="ball ${ballColors[i%ballColors.length]}">${n}</div>`).join('')}</div>
-      ${t.machine?`<div style="font-size:9px;color:var(--purple);font-family:'Share Tech Mono';margin-bottom:6px;margin-top:4px;">🎰 MACHINE</div><div class="balls">${machineBalls}</div>`:''}
+      <div class="balls">${t.boules.map((n,i)=>`<div class="ball ${ballColors[i%5]}">${n}</div>`).join('')}</div>
+      ${t.machine?`<div style="font-size:9px;color:var(--purple);font-family:'Share Tech Mono';margin:6px 0;">🎰 MACHINE</div><div class="balls">${machineBalls}</div>`:''}
       <div class="tc-stats">
         <div class="tc-stat"><div class="tc-stat-l">SOMME</div><div class="tc-stat-v">${t.boules.reduce((a,b)=>a+b,0)}</div></div>
         <div class="tc-stat"><div class="tc-stat-l">ÉCART</div><div class="tc-stat-v">${Math.max(...t.boules)-Math.min(...t.boules)}</div></div>
@@ -304,18 +301,12 @@ function buildTirageCard(t){
 }
 
 function renderMatrice(){
-  const maxFreq=Math.max(...Object.values(FREQ).map(f=>f.total));
+  const maxFreq=Math.max(1,...Object.values(FREQ).map(f=>f.total));
   const lastBoules=TIRAGES_LONACI[0].boules;
   let html='';
   for(let i=1;i<=90;i++){
     const f=FREQ[i].total,ratio=f/maxFreq;
-    const isResult=lastBoules.includes(i),isSelected=SELECTION.includes(i);
-    let cls='normal';
-    if(isSelected)cls='selected';
-    else if(isResult)cls='result';
-    else if(ratio>0.7)cls='hot';
-    else if(ratio>0.4)cls='warm';
-    else if(ratio<0.2)cls='cold';
+    let cls=SELECTION.includes(i)?'selected':lastBoules.includes(i)?'result':ratio>0.7?'hot':ratio>0.4?'warm':ratio<0.2?'cold':'normal';
     html+=`<div class="m-cell ${cls}" onclick="toggleNum(${i})" id="mc${i}">${i}</div>`;
   }
   document.getElementById('matriceGrid').innerHTML=html;
@@ -331,125 +322,108 @@ function toggleNum(n){
 
 function updateMatriceDisplay(){
   const lastBoules=TIRAGES_LONACI[0].boules;
-  const maxFreq=Math.max(...Object.values(FREQ).map(f=>f.total));
+  const maxFreq=Math.max(1,...Object.values(FREQ).map(f=>f.total));
   for(let i=1;i<=90;i++){
     const el=document.getElementById('mc'+i);if(!el)continue;
-    const f=FREQ[i].total,ratio=f/maxFreq;
-    let cls='normal';
-    if(SELECTION.includes(i))cls='selected';
-    else if(lastBoules.includes(i))cls='result';
-    else if(ratio>0.7)cls='hot';
-    else if(ratio>0.4)cls='warm';
-    else if(ratio<0.2)cls='cold';
+    const ratio=FREQ[i].total/maxFreq;
+    let cls=SELECTION.includes(i)?'selected':lastBoules.includes(i)?'result':ratio>0.7?'hot':ratio>0.4?'warm':ratio<0.2?'cold':'normal';
     el.className=`m-cell ${cls}`;
   }
   const disp=document.getElementById('selectionDisplay');
   if(!SELECTION.length){disp.innerHTML='<div style="font-size:11px;color:var(--muted);font-family:\'Share Tech Mono\'">Appuyez sur des numéros dans la grille</div>';return;}
-  const sorted=[...SELECTION].sort((a,b)=>a-b);
-  disp.innerHTML=`<div style="display:flex;gap:8px;flex-wrap:wrap;align-items:center;">${sorted.map(n=>`<div class="ball ball-gold" style="width:38px;height:38px;font-size:17px;">${n}</div>`).join('')}<div style="font-size:10px;color:var(--muted);font-family:'Share Tech Mono';margin-left:4px;">${SELECTION.length}/5</div></div>`;
+  disp.innerHTML=`<div style="display:flex;gap:8px;flex-wrap:wrap;align-items:center;">${[...SELECTION].sort((a,b)=>a-b).map(n=>`<div class="ball ball-gold" style="width:38px;height:38px;font-size:17px;">${n}</div>`).join('')}<span style="font-size:10px;color:var(--muted);font-family:'Share Tech Mono'">${SELECTION.length}/5</span></div>`;
 }
 
 function clearSelection(){SELECTION=[];updateMatriceDisplay();}
 function genererAlea(){SELECTION=[];while(SELECTION.length<5){const n=Math.floor(Math.random()*90)+1;if(!SELECTION.includes(n))SELECTION.push(n);}updateMatriceDisplay();}
-function analyserSelection(){if(!SELECTION.length)return;document.getElementById('aiInp').value=`Analyse ma grille Loto CI: ${SELECTION.sort((a,b)=>a-b).join(', ')}. Évalue ces numéros selon les statistiques du Loto Bonheur LONACI.`;sw('ia',document.querySelectorAll('.tab')[5]);askAI();}
+function analyserSelection(){if(!SELECTION.length)return;document.getElementById('aiInp').value=`Analyse ma grille Loto CI: ${[...SELECTION].sort((a,b)=>a-b).join(', ')}. Évalue ces numéros selon les stats LONACI.`;sw('ia',document.querySelectorAll('.tab')[5]);askAI();}
 
 function filterProno(type,el){PRONO_TYPE=type;document.querySelectorAll('[data-p]').forEach(b=>b.classList.remove('on'));el.classList.add('on');renderPronostics();}
 
 function renderPronostics(){
   const tirages=TIRAGES_LONACI.filter(t=>t.type===PRONO_TYPE);
+  const sorted=Object.entries(FREQ).sort(([,a],[,b])=>b[PRONO_TYPE]-a[PRONO_TYPE]);
+  const top=sorted.slice(0,20).map(([n])=>parseInt(n));
   document.getElementById('pronoList').innerHTML=tirages.map(t=>{
-    const sorted=Object.entries(FREQ).sort(([,a],[,b])=>b[PRONO_TYPE]-a[PRONO_TYPE]);
-    const top=sorted.slice(0,20).map(([n])=>parseInt(n));
     const prono=[];
     while(prono.length<5){const idx=Math.floor(Math.abs(Math.sin(t.id*7+prono.length*13))*top.length);if(!prono.includes(top[idx]))prono.push(top[idx]);}
     const conf=55+Math.floor(Math.abs(Math.sin(t.id*3))*30);
     return`<div class="prono-card">
       <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px;">
         <div class="prono-title">${t.nom} — ${t.heure}</div>
-        <span class="${PRONO_TYPE==='digital'?'badge-digital':'badge-machine'} tc-type">${PRONO_TYPE==='digital'?'🖥️':'🎰'}</span>
+        <span class="${PRONO_TYPE==='digital'?'t-digital':'t-machine'} tc-type">${PRONO_TYPE==='digital'?'🖥️':'🎰'}</span>
       </div>
       <div class="prono-label">SÉLECTION IA</div>
-      <div class="prono-nums">${prono.sort((a,b)=>a-b).map((n,i)=>{const colors=['ball-gold','ball-red','ball-blue','ball-green','ball-purple'];return`<div class="ball ${colors[i]}" style="width:36px;height:36px;font-size:16px;">${n}</div>`;}).join('')}</div>
+      <div class="prono-nums">${prono.sort((a,b)=>a-b).map((n,i)=>`<div class="ball ${['ball-gold','ball-red','ball-blue','ball-green','ball-purple'][i]}" style="width:36px;height:36px;font-size:16px;">${n}</div>`).join('')}</div>
       <div style="display:flex;justify-content:space-between;margin-top:6px;">
         <div style="font-size:9px;color:var(--muted);font-family:'Share Tech Mono'">Confiance: ${conf}%</div>
-        <div style="font-size:9px;color:var(--purple);font-family:'Share Tech Mono'">${HISTORIQUE.length} tirages analysés</div>
+        <div style="font-size:9px;color:var(--purple);font-family:'Share Tech Mono'">${HISTORIQUE.length} tirages</div>
       </div>
       <div class="conf-bar"><div class="conf-fill" style="width:${conf}%"></div></div>
     </div>`;
   }).join('');
 }function renderTurbo(){
-  const turboNums=TIRAGES_LONACI.slice(0,6).map(t=>({nom:t.nom,num:Math.floor(Math.abs(Math.sin(t.id*11))*90)+1,heure:t.heure}));
-  document.getElementById('turboSection').innerHTML=turboNums.map(t=>`
+  document.getElementById('turboSection').innerHTML=TIRAGES_LONACI.slice(0,6).map(t=>`
     <div class="turbo-card">
       <div class="turbo-name">${t.nom}</div>
-      <div class="ball ball-gold" style="width:44px;height:44px;font-size:22px;margin:0 auto 6px;display:flex;align-items:center;justify-content:center;border-radius:50%;">${t.num}</div>
+      <div class="ball ball-gold" style="width:44px;height:44px;font-size:22px;margin:0 auto 6px;display:flex;align-items:center;justify-content:center;border-radius:50%;">${Math.floor(Math.abs(Math.sin(t.id*11))*90)+1}</div>
       <div class="turbo-label">${t.heure}</div>
     </div>`).join('');
 
-  const pari2=TIRAGES_LONACI.slice(0,4).map(t=>({nom:t.nom,nums:[Math.floor(Math.abs(Math.sin(t.id*7))*90)+1,Math.floor(Math.abs(Math.sin(t.id*13))*90)+1].sort((a,b)=>a-b),type:t.type}));
-  document.getElementById('pari2Section').innerHTML=pari2.map(t=>`
-    <div class="tirage-card" style="margin-bottom:8px;">
-      <div class="tc-header"><div class="tc-name">${t.nom}</div><span class="${t.type==='digital'?'t-digital':'t-machine'} tc-type">${t.type==='digital'?'🖥️':'🎰'}</span></div>
-      <div class="tc-body"><div class="balls">${t.nums.map((n,i)=>`<div class="ball ${i===0?'ball-gold':'ball-blue'}" style="width:38px;height:38px;font-size:18px;">${n}</div>`).join('')}</div></div>
-    </div>`).join('');
+  document.getElementById('pari2Section').innerHTML=TIRAGES_LONACI.slice(0,4).map(t=>{
+    const n=[Math.floor(Math.abs(Math.sin(t.id*7))*90)+1,Math.floor(Math.abs(Math.sin(t.id*13))*90)+1].sort((a,b)=>a-b);
+    return`<div class="tirage-card" style="margin-bottom:8px;"><div class="tc-header"><div class="tc-name">${t.nom}</div><span class="${t.type==='digital'?'t-digital':'t-machine'} tc-type">${t.type==='digital'?'🖥️':'🎰'}</span></div><div class="tc-body"><div class="balls">${n.map((x,i)=>`<div class="ball ${i===0?'ball-gold':'ball-blue'}" style="width:38px;height:38px;font-size:18px;">${x}</div>`).join('')}</div></div></div>`;
+  }).join('');
 
-  const pari3=TIRAGES_LONACI.slice(0,3).map(t=>({nom:t.nom,nums:[Math.floor(Math.abs(Math.sin(t.id*5))*90)+1,Math.floor(Math.abs(Math.sin(t.id*9))*90)+1,Math.floor(Math.abs(Math.sin(t.id*15))*90)+1].sort((a,b)=>a-b),type:t.type}));
-  document.getElementById('pari3Section').innerHTML=pari3.map(t=>`
-    <div class="tirage-card" style="margin-bottom:8px;">
-      <div class="tc-header"><div class="tc-name">${t.nom}</div><span class="${t.type==='digital'?'t-digital':'t-machine'} tc-type">${t.type==='digital'?'🖥️':'🎰'}</span></div>
-      <div class="tc-body"><div class="balls">${t.nums.map((n,i)=>`<div class="ball ${['ball-gold','ball-red','ball-blue'][i]}" style="width:38px;height:38px;font-size:18px;">${n}</div>`).join('')}</div></div>
-    </div>`).join('');
+  document.getElementById('pari3Section').innerHTML=TIRAGES_LONACI.slice(0,3).map(t=>{
+    const n=[Math.floor(Math.abs(Math.sin(t.id*5))*90)+1,Math.floor(Math.abs(Math.sin(t.id*9))*90)+1,Math.floor(Math.abs(Math.sin(t.id*15))*90)+1].sort((a,b)=>a-b);
+    return`<div class="tirage-card" style="margin-bottom:8px;"><div class="tc-header"><div class="tc-name">${t.nom}</div><span class="${t.type==='digital'?'t-digital':'t-machine'} tc-type">${t.type==='digital'?'🖥️':'🎰'}</span></div><div class="tc-body"><div class="balls">${n.map((x,i)=>`<div class="ball ${['ball-gold','ball-red','ball-blue'][i]}" style="width:38px;height:38px;font-size:18px;">${x}</div>`).join('')}</div></div></div>`;
+  }).join('');
 
-  const pari4=TIRAGES_LONACI.slice(0,2).map(t=>({nom:t.nom,nums:[Math.floor(Math.abs(Math.sin(t.id*3))*90)+1,Math.floor(Math.abs(Math.sin(t.id*7))*90)+1,Math.floor(Math.abs(Math.sin(t.id*11))*90)+1,Math.floor(Math.abs(Math.sin(t.id*17))*90)+1].sort((a,b)=>a-b),type:t.type}));
-  document.getElementById('pari4Section').innerHTML=pari4.map(t=>`
-    <div class="tirage-card" style="margin-bottom:8px;">
-      <div class="tc-header"><div class="tc-name">${t.nom}</div><span class="${t.type==='digital'?'t-digital':'t-machine'} tc-type">${t.type==='digital'?'🖥️':'🎰'}</span></div>
-      <div class="tc-body"><div class="balls">${t.nums.map((n,i)=>`<div class="ball ${['ball-gold','ball-red','ball-blue','ball-green'][i]}" style="width:38px;height:38px;font-size:18px;">${n}</div>`).join('')}</div></div>
-    </div>`).join('');
+  document.getElementById('pari4Section').innerHTML=TIRAGES_LONACI.slice(0,2).map(t=>{
+    const n=[Math.floor(Math.abs(Math.sin(t.id*3))*90)+1,Math.floor(Math.abs(Math.sin(t.id*7))*90)+1,Math.floor(Math.abs(Math.sin(t.id*11))*90)+1,Math.floor(Math.abs(Math.sin(t.id*17))*90)+1].sort((a,b)=>a-b);
+    return`<div class="tirage-card" style="margin-bottom:8px;"><div class="tc-header"><div class="tc-name">${t.nom}</div><span class="${t.type==='digital'?'t-digital':'t-machine'} tc-type">${t.type==='digital'?'🖥️':'🎰'}</span></div><div class="tc-body"><div class="balls">${n.map((x,i)=>`<div class="ball ${['ball-gold','ball-red','ball-blue','ball-green'][i]}" style="width:38px;height:38px;font-size:18px;">${x}</div>`).join('')}</div></div></div>`;
+  }).join('');
 }
 
 function renderStats(){
   const digitalTop=Object.entries(FREQ).sort(([,a],[,b])=>b.digital-a.digital).slice(0,10);
-  const maxD=digitalTop[0][1].digital;
-  document.getElementById('hotNumsDigital').innerHTML=digitalTop.map(([n,f])=>`
-    <div class="freq-row"><div class="freq-num">${n}</div><div class="freq-bar-wrap"><div class="freq-bar" style="width:${f.digital/maxD*100}%;background:linear-gradient(90deg,var(--cyan),var(--blue))"></div></div><div class="freq-count">${f.digital}x</div></div>`).join('');
+  const maxD=Math.max(1,digitalTop[0][1].digital);
+  document.getElementById('hotNumsDigital').innerHTML=digitalTop.map(([n,f])=>`<div class="freq-row"><div class="freq-num">${n}</div><div class="freq-bar-wrap"><div class="freq-bar" style="width:${f.digital/maxD*100}%;background:linear-gradient(90deg,var(--cyan),var(--blue))"></div></div><div class="freq-count">${f.digital}x</div></div>`).join('');
 
   const machineTop=Object.entries(FREQ).sort(([,a],[,b])=>b.machine-a.machine).slice(0,10);
-  const maxM=machineTop[0][1].machine;
-  document.getElementById('hotNumsMachine').innerHTML=machineTop.map(([n,f])=>`
-    <div class="freq-row"><div class="freq-num">${n}</div><div class="freq-bar-wrap"><div class="freq-bar" style="width:${f.machine/maxM*100}%;background:linear-gradient(90deg,var(--purple),var(--red))"></div></div><div class="freq-count">${f.machine}x</div></div>`).join('');
+  const maxM=Math.max(1,machineTop[0][1].machine);
+  document.getElementById('hotNumsMachine').innerHTML=machineTop.map(([n,f])=>`<div class="freq-row"><div class="freq-num">${n}</div><div class="freq-bar-wrap"><div class="freq-bar" style="width:${f.machine/maxM*100}%;background:linear-gradient(90deg,var(--purple),var(--red))"></div></div><div class="freq-count">${f.machine}x</div></div>`).join('');
 
   const coldTop=Object.entries(FREQ).sort(([,a],[,b])=>a.total-b.total).slice(0,10);
-  document.getElementById('coldNums').innerHTML=coldTop.map(([n,f])=>`
-    <div class="freq-row"><div class="freq-num" style="color:var(--blue)">${n}</div><div class="freq-bar-wrap"><div class="freq-bar" style="width:${Math.max(5,f.total/maxD*100)}%;background:var(--blue)"></div></div><div class="freq-count">${f.total}x</div></div>`).join('');
+  document.getElementById('coldNums').innerHTML=coldTop.map(([n,f])=>`<div class="freq-row"><div class="freq-num" style="color:var(--blue)">${n}</div><div class="freq-bar-wrap"><div class="freq-bar" style="width:${Math.max(5,f.total/maxD*100)}%;background:var(--blue)"></div></div><div class="freq-count">${f.total}x</div></div>`).join('');
 
   const allNums=HISTORIQUE.flatMap(t=>t.boules);
-  const avg=(allNums.reduce((a,b)=>a+b,0)/allNums.length).toFixed(1);
+  const avg=allNums.length?(allNums.reduce((a,b)=>a+b,0)/allNums.length).toFixed(1):0;
   const pairs=allNums.filter(n=>n%2===0).length;
-  document.getElementById('globalStats').innerHTML=`
-    <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;">
-      <div class="tc-stat"><div class="tc-stat-l">TIRAGES</div><div class="tc-stat-v">${HISTORIQUE.length}</div></div>
-      <div class="tc-stat"><div class="tc-stat-l">MOY.</div><div class="tc-stat-v">${avg}</div></div>
-      <div class="tc-stat"><div class="tc-stat-l">PAIRS%</div><div class="tc-stat-v">${Math.round(pairs/allNums.length*100)}%</div></div>
-    </div>`;
+  document.getElementById('globalStats').innerHTML=`<div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;">
+    <div class="tc-stat"><div class="tc-stat-l">TIRAGES</div><div class="tc-stat-v">${HISTORIQUE.length}</div></div>
+    <div class="tc-stat"><div class="tc-stat-l">MOYENNE</div><div class="tc-stat-v">${avg}</div></div>
+    <div class="tc-stat"><div class="tc-stat-l">PAIRS%</div><div class="tc-stat-v">${allNums.length?Math.round(pairs/allNums.length*100):0}%</div></div>
+  </div>`;
 }
 
 function buildContext(){
   const d5=Object.entries(FREQ).sort(([,a],[,b])=>b.digital-a.digital).slice(0,5).map(([n])=>n).join(', ');
   const m5=Object.entries(FREQ).sort(([,a],[,b])=>b.machine-a.machine).slice(0,5).map(([n])=>n).join(', ');
   const c5=Object.entries(FREQ).sort(([,a],[,b])=>a.total-b.total).slice(0,5).map(([n])=>n).join(', ');
-  return`\n\nContexte LONACI: Top Digital: ${d5}. Top Machine: ${m5}. Retardataires: ${c5}. Dernier Digital: ${TIRAGES_LONACI[0].boules.join(', ')}. Basé sur ${HISTORIQUE.length} tirages.`;
+  return`\nTop Digital: ${d5}. Top Machine: ${m5}. Retardataires: ${c5}. Dernier Digital: ${TIRAGES_LONACI[0].boules.join(', ')}. ${HISTORIQUE.length} tirages analysés.`;
 }
 
 function quickAI(type){
   const ctx=buildContext();
   const qs={
-    digital:`Génère une grille de 5 numéros pour le prochain tirage Digital du Loto Bonheur LONACI Côte d'Ivoire. Justifie chaque numéro.${ctx}`,
-    machine:`Génère une grille de 5 numéros pour le prochain tirage Machine du Loto Bonheur LONACI. Justifie.${ctx}`,
-    turbo:`Quel numéro Turbo (1 seul numéro entre 1-90) conseilles-tu pour le Loto CI ? Justifie.${ctx}`,
-    pari2:`Donne 2 numéros pour un Pari 2 au Loto Bonheur LONACI. Justifie.${ctx}`,
-    pari3:`Donne 3 numéros pour un Pari 3 au Loto Bonheur LONACI. Justifie.${ctx}`,
-    stats:`Analyse les tendances du Loto Bonheur LONACI: numéros chauds, froids, retardataires. Conseils stratégiques.${ctx}`
+    digital:`Génère une grille de 5 numéros pour le prochain tirage Digital Loto Bonheur LONACI Côte d'Ivoire. Justifie chaque numéro.${ctx}`,
+    machine:`Génère une grille de 5 numéros pour le prochain tirage Machine LONACI. Justifie.${ctx}`,
+    turbo:`Quel numéro Turbo (1 seul entre 1-90) pour le Loto CI ? Justifie.${ctx}`,
+    pari2:`2 numéros pour un Pari 2 au Loto Bonheur LONACI. Justifie.${ctx}`,
+    pari3:`3 numéros pour un Pari 3 au Loto Bonheur LONACI. Justifie.${ctx}`,
+    stats:`Analyse les tendances du Loto Bonheur LONACI: chauds, froids, retardataires. Conseils stratégiques.${ctx}`
   };
   document.getElementById('aiInp').value=qs[type]||qs.digital;
   askAI();
@@ -462,13 +436,7 @@ async function askAI(){
   try{
     const res=await fetch("https://api.anthropic.com/v1/messages",{method:"POST",headers:{"Content-Type":"application/json"},
       body:JSON.stringify({model:"claude-sonnet-4-20250514",max_tokens:1000,
-        system:`Tu es un expert du Loto Bonheur LONACI de Côte d'Ivoire. Tu connais:
-- La grille officielle 1-90
-- Tirages Digital: 21h, 23h, 22h, Réveil 7h, 8h, Afterwork 18h30
-- Tirages Machine: Réveil, Étoile, Akwaba, National, Moaye, Fortune, Bénédiction, Diamant, Prestige, Weekend
-- Paris: Simple, Turbo (1 num), Pari 2, Pari 3, Pari 4, Pari 5
-- Stratégies: numéros chauds/froids/retardataires
-Donne des conseils précis avec numéros et justifications. Rappelle que le loto est un jeu de hasard. En français.`,
+        system:`Tu es expert du Loto Bonheur LONACI Côte d'Ivoire. Grille 1-90. Tirages Digital (21h,23h,22h,Réveil 7h/8h,Afterwork) et Machine (Réveil,Étoile,Akwaba,National,Moaye,Fortune,Bénédiction,Diamant,Prestige,Weekend). Paris: Simple,Turbo,Pari 2/3/4/5. Donne conseils précis avec numéros. Rappelle que c'est un jeu de hasard. En français.`,
         messages:[{role:"user",content:q}]})});
     const d=await res.json();
     t.style.display='none';
@@ -490,8 +458,15 @@ function sw(id,tabEl,navEl){
   if(id==='stats'&&!_statsLoaded){renderStats();_statsLoaded=true;}
 }
 
+// Démarrage rapide
 renderTirages();
-renderMatrice();
+
+// Chargement lourd en arrière-plan
+setTimeout(()=>{
+  HISTORIQUE=generateHistorique();
+  calcFrequences();
+  renderMatrice();
+},200);
 </script>
 </body>
 </html>
