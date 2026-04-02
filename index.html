@@ -215,7 +215,7 @@ body{background:var(--bg);color:var(--text);font-family:system-ui,sans-serif;max
   <div class="ni" onclick="sw('stats',null,this)"><div class="ni-i">📈</div><div class="ni-l">STATS</div></div>
   <div class="ni" onclick="sw('ia',null,this)"><div class="ni-i">🤖</div><div class="ni-l">IA</div></div>
 </div><script>
-const TIRAGES_LONACI=[
+const TIRAGES=[
   {id:1,nom:'Digital 21h',type:'digital',heure:'21h00',boules:[7,14,23,45,67],machine:null,date:'Aujourd\'hui'},
   {id:2,nom:'Digital Réveil 7h',type:'digital',heure:'07h00',boules:[3,28,41,56,72],machine:null,date:'Aujourd\'hui'},
   {id:3,nom:'Digital 23h',type:'digital',heure:'23h00',boules:[11,19,38,54,81],machine:null,date:'Aujourd\'hui'},
@@ -239,193 +239,185 @@ const TIRAGES_LONACI=[
   {id:21,nom:'Special Weekend 3h',type:'machine',heure:'03h00',boules:[11,28,42,61,86],machine:[15,38,64],date:'Weekend'},
 ];
 
-let HISTORIQUE=[];
-let FREQ={};
+// Fréquences
+const FREQ={};
 for(let i=1;i<=90;i++)FREQ[i]={digital:0,machine:0,total:0};
-
-function generateHistorique(){
-  const hist=[];
-  for(let i=0;i<100;i++){
-    const nums=[];
-    while(nums.length<5){const n=Math.floor(Math.abs(Math.sin(12345+i*17+nums.length*31))*90)+1;if(!nums.includes(n))nums.push(n);}
-    hist.push({boules:nums.sort((a,b)=>a-b),type:i%2===0?'digital':'machine'});
-  }
-  return hist;
+for(let i=0;i<100;i++){
+  const nums=[];
+  while(nums.length<5){const n=Math.floor(Math.abs(Math.sin(12345+i*17+nums.length*31))*90)+1;if(!nums.includes(n))nums.push(n);}
+  const type=i%2===0?'digital':'machine';
+  nums.forEach(n=>{FREQ[n][type]++;FREQ[n].total++;});
 }
 
-function calcFrequences(){
-  HISTORIQUE.forEach(t=>{t.boules.forEach(n=>{if(FREQ[n]){FREQ[n][t.type]++;FREQ[n].total++;}});});
-}
-
-let SELECTION=[];
-let PRONO_TYPE='digital';
-let _pronoLoaded=false,_turboLoaded=false,_statsLoaded=false;
+let SEL=[];
+let PTYPE='digital';
+let CFILT='all';
 
 const now=new Date();
-const jours=['Dim','Lun','Mar','Mer','Jeu','Ven','Sam'];
-const mois=['Jan','Fév','Mar','Avr','Mai','Jun','Jul','Aoû','Sep','Oct','Nov','Déc'];
-document.getElementById('hDate').textContent=`${jours[now.getDay()]} ${now.getDate()} ${mois[now.getMonth()]}`;
+const J=['Dim','Lun','Mar','Mer','Jeu','Ven','Sam'];
+const M=['Jan','Fév','Mar','Avr','Mai','Jun','Jul','Aoû','Sep','Oct','Nov','Déc'];
+document.getElementById('hDate').textContent=`${J[now.getDay()]} ${now.getDate()} ${M[now.getMonth()]}`;
 
-let CURRENT_FILTER='all';
-function filterTirages(f,el){CURRENT_FILTER=f;document.querySelectorAll('[data-f]').forEach(b=>b.classList.remove('on'));el.classList.add('on');renderTirages();}
-
-function renderTirages(){
-  let tirages=TIRAGES_LONACI;
-  if(CURRENT_FILTER!=='all'){
-    if(['digital','machine'].includes(CURRENT_FILTER))tirages=tirages.filter(t=>t.type===CURRENT_FILTER);
-    else tirages=tirages.filter(t=>t.nom.toLowerCase().includes(CURRENT_FILTER));
-  }
-  document.getElementById('tiragesList').innerHTML=tirages.map(t=>buildTirageCard(t)).join('');
+function sw(id,tabEl,navEl){
+  document.querySelectorAll('.pg').forEach(p=>p.classList.remove('on'));
+  document.getElementById('pg-'+id).classList.add('on');
+  if(tabEl){document.querySelectorAll('.tab').forEach(t=>t.classList.remove('on'));tabEl.classList.add('on');}
+  if(navEl){document.querySelectorAll('.ni').forEach(n=>n.classList.remove('on'));navEl.classList.add('on');}
 }
 
-function buildTirageCard(t){
-  const isDigital=t.type==='digital';
-  const ballColors=['ball-gold','ball-red','ball-blue','ball-green','ball-purple'];
-  const machineBalls=t.machine?t.machine.map(n=>`<div class="ball ball-machine" style="width:32px;height:32px;font-size:14px;">${n}</div>`).join(''):'';
-  return`<div class="tirage-card">
-    <div class="tc-header">
-      <div><div class="tc-name">${t.nom}</div><div class="tc-date">${t.date} • ${t.heure}</div></div>
-      <span class="${isDigital?'t-digital':'t-machine'} tc-type">${isDigital?'🖥️ DIGITAL':'🎰 MACHINE'}</span>
-    </div>
-    <div class="tc-body">
-      <div style="font-size:9px;color:var(--muted);font-family:'Share Tech Mono';margin-bottom:6px;">BOULES TIRÉES</div>
-      <div class="balls">${t.boules.map((n,i)=>`<div class="ball ${ballColors[i%5]}">${n}</div>`).join('')}</div>
-      ${t.machine?`<div style="font-size:9px;color:var(--purple);font-family:'Share Tech Mono';margin:6px 0;">🎰 MACHINE</div><div class="balls">${machineBalls}</div>`:''}
-      <div class="tc-stats">
-        <div class="tc-stat"><div class="tc-stat-l">SOMME</div><div class="tc-stat-v">${t.boules.reduce((a,b)=>a+b,0)}</div></div>
-        <div class="tc-stat"><div class="tc-stat-l">ÉCART</div><div class="tc-stat-v">${Math.max(...t.boules)-Math.min(...t.boules)}</div></div>
-        <div class="tc-stat"><div class="tc-stat-l">PAIRS</div><div class="tc-stat-v">${t.boules.filter(n=>n%2===0).length}/5</div></div>
+function filterTirages(f,el){
+  CFILT=f;
+  document.querySelectorAll('[data-f]').forEach(b=>b.classList.remove('on'));
+  el.classList.add('on');
+  renderTirages();
+}
+
+function renderTirages(){
+  let t=TIRAGES;
+  if(CFILT!=='all'){
+    if(['digital','machine'].includes(CFILT))t=t.filter(x=>x.type===CFILT);
+    else t=t.filter(x=>x.nom.toLowerCase().includes(CFILT));
+  }
+  const BC=['ball-gold','ball-red','ball-blue','ball-green','ball-purple'];
+  document.getElementById('tiragesList').innerHTML=t.map(x=>`
+    <div class="tirage-card">
+      <div class="tc-header">
+        <div><div class="tc-name">${x.nom}</div><div class="tc-date">${x.date} • ${x.heure}</div></div>
+        <span class="${x.type==='digital'?'t-digital':'t-machine'} tc-type">${x.type==='digital'?'🖥️ DIGITAL':'🎰 MACHINE'}</span>
       </div>
-    </div>
-  </div>`;
+      <div class="tc-body">
+        <div style="font-size:9px;color:var(--muted);font-family:'Share Tech Mono';margin-bottom:6px;">BOULES TIRÉES</div>
+        <div class="balls">${x.boules.map((n,i)=>`<div class="ball ${BC[i]}">${n}</div>`).join('')}</div>
+        ${x.machine?`<div style="font-size:9px;color:var(--purple);font-family:'Share Tech Mono';margin:6px 0;">🎰 MACHINE</div><div class="balls">${x.machine.map(n=>`<div class="ball ball-machine" style="width:32px;height:32px;font-size:14px;">${n}</div>`).join('')}</div>`:''}
+        <div class="tc-stats">
+          <div class="tc-stat"><div class="tc-stat-l">SOMME</div><div class="tc-stat-v">${x.boules.reduce((a,b)=>a+b,0)}</div></div>
+          <div class="tc-stat"><div class="tc-stat-l">ÉCART</div><div class="tc-stat-v">${Math.max(...x.boules)-Math.min(...x.boules)}</div></div>
+          <div class="tc-stat"><div class="tc-stat-l">PAIRS</div><div class="tc-stat-v">${x.boules.filter(n=>n%2===0).length}/5</div></div>
+        </div>
+      </div>
+    </div>`).join('');
 }
 
 function renderMatrice(){
-  const maxFreq=Math.max(1,...Object.values(FREQ).map(f=>f.total));
-  const lastBoules=TIRAGES_LONACI[0].boules;
-  let html='';
+  const mxF=Math.max(1,...Object.values(FREQ).map(f=>f.total));
+  const lb=TIRAGES[0].boules;
+  let h='';
   for(let i=1;i<=90;i++){
-    const f=FREQ[i].total,ratio=f/maxFreq;
-    let cls=SELECTION.includes(i)?'selected':lastBoules.includes(i)?'result':ratio>0.7?'hot':ratio>0.4?'warm':ratio<0.2?'cold':'normal';
-    html+=`<div class="m-cell ${cls}" onclick="toggleNum(${i})" id="mc${i}">${i}</div>`;
+    const r=FREQ[i].total/mxF;
+    const cls=SEL.includes(i)?'selected':lb.includes(i)?'result':r>0.7?'hot':r>0.4?'warm':r<0.2?'cold':'normal';
+    h+=`<div class="m-cell ${cls}" onclick="tN(${i})" id="mc${i}">${i}</div>`;
   }
-  document.getElementById('matriceGrid').innerHTML=html;
+  document.getElementById('matriceGrid').innerHTML=h;
 }
 
-function toggleNum(n){
-  const idx=SELECTION.indexOf(n);
-  if(idx>=0)SELECTION.splice(idx,1);
-  else if(SELECTION.length<5)SELECTION.push(n);
-  else{SELECTION.shift();SELECTION.push(n);}
-  updateMatriceDisplay();
+function tN(n){
+  const i=SEL.indexOf(n);
+  if(i>=0)SEL.splice(i,1);
+  else if(SEL.length<5)SEL.push(n);
+  else{SEL.shift();SEL.push(n);}
+  updSel();
 }
 
-function updateMatriceDisplay(){
-  const lastBoules=TIRAGES_LONACI[0].boules;
-  const maxFreq=Math.max(1,...Object.values(FREQ).map(f=>f.total));
+function updSel(){
+  const lb=TIRAGES[0].boules;
+  const mxF=Math.max(1,...Object.values(FREQ).map(f=>f.total));
   for(let i=1;i<=90;i++){
     const el=document.getElementById('mc'+i);if(!el)continue;
-    const ratio=FREQ[i].total/maxFreq;
-    let cls=SELECTION.includes(i)?'selected':lastBoules.includes(i)?'result':ratio>0.7?'hot':ratio>0.4?'warm':ratio<0.2?'cold':'normal';
-    el.className=`m-cell ${cls}`;
+    const r=FREQ[i].total/mxF;
+    el.className=`m-cell ${SEL.includes(i)?'selected':lb.includes(i)?'result':r>0.7?'hot':r>0.4?'warm':r<0.2?'cold':'normal'}`;
   }
-  const disp=document.getElementById('selectionDisplay');
-  if(!SELECTION.length){disp.innerHTML='<div style="font-size:11px;color:var(--muted);font-family:\'Share Tech Mono\'">Appuyez sur des numéros dans la grille</div>';return;}
-  disp.innerHTML=`<div style="display:flex;gap:8px;flex-wrap:wrap;align-items:center;">${[...SELECTION].sort((a,b)=>a-b).map(n=>`<div class="ball ball-gold" style="width:38px;height:38px;font-size:17px;">${n}</div>`).join('')}<span style="font-size:10px;color:var(--muted);font-family:'Share Tech Mono'">${SELECTION.length}/5</span></div>`;
+  const d=document.getElementById('selectionDisplay');
+  if(!SEL.length){d.innerHTML='<div style="font-size:11px;color:var(--muted);font-family:\'Share Tech Mono\'">Appuyez sur des numéros</div>';return;}
+  d.innerHTML=`<div style="display:flex;gap:8px;flex-wrap:wrap;align-items:center;">${[...SEL].sort((a,b)=>a-b).map(n=>`<div class="ball ball-gold" style="width:38px;height:38px;font-size:17px;">${n}</div>`).join('')}<span style="font-size:10px;color:var(--muted);margin-left:4px;">${SEL.length}/5</span></div>`;
 }
 
-function clearSelection(){SELECTION=[];updateMatriceDisplay();}
-function genererAlea(){SELECTION=[];while(SELECTION.length<5){const n=Math.floor(Math.random()*90)+1;if(!SELECTION.includes(n))SELECTION.push(n);}updateMatriceDisplay();}
-function analyserSelection(){if(!SELECTION.length)return;document.getElementById('aiInp').value=`Analyse ma grille Loto CI: ${[...SELECTION].sort((a,b)=>a-b).join(', ')}. Évalue ces numéros selon les stats LONACI.`;sw('ia',document.querySelectorAll('.tab')[5]);askAI();}
+function clearSelection(){SEL=[];updSel();}
+function genererAlea(){SEL=[];while(SEL.length<5){const n=Math.floor(Math.random()*90)+1;if(!SEL.includes(n))SEL.push(n);}updSel();}
+function analyserSelection(){if(!SEL.length)return;document.getElementById('aiInp').value=`Analyse ma grille: ${[...SEL].sort((a,b)=>a-b).join(', ')} pour le Loto Bonheur LONACI.`;sw('ia',document.querySelectorAll('.tab')[5]);askAI();}
 
-function filterProno(type,el){PRONO_TYPE=type;document.querySelectorAll('[data-p]').forEach(b=>b.classList.remove('on'));el.classList.add('on');renderPronostics();}
+function filterProno(type,el){PTYPE=type;document.querySelectorAll('[data-p]').forEach(b=>b.classList.remove('on'));el.classList.add('on');renderProno();}
 
-function renderPronostics(){
-  const tirages=TIRAGES_LONACI.filter(t=>t.type===PRONO_TYPE);
-  const sorted=Object.entries(FREQ).sort(([,a],[,b])=>b[PRONO_TYPE]-a[PRONO_TYPE]);
-  const top=sorted.slice(0,20).map(([n])=>parseInt(n));
-  document.getElementById('pronoList').innerHTML=tirages.map(t=>{
-    const prono=[];
-    while(prono.length<5){const idx=Math.floor(Math.abs(Math.sin(t.id*7+prono.length*13))*top.length);if(!prono.includes(top[idx]))prono.push(top[idx]);}
-    const conf=55+Math.floor(Math.abs(Math.sin(t.id*3))*30);
+function renderProno(){
+  const t=TIRAGES.filter(x=>x.type===PTYPE);
+  const top=Object.entries(FREQ).sort(([,a],[,b])=>b[PTYPE]-a[PTYPE]).slice(0,20).map(([n])=>parseInt(n));
+  const BC=['ball-gold','ball-red','ball-blue','ball-green','ball-purple'];
+  document.getElementById('pronoList').innerHTML=t.map(x=>{
+    const p=[];while(p.length<5){const i=Math.floor(Math.abs(Math.sin(x.id*7+p.length*13))*top.length);if(!p.includes(top[i]))p.push(top[i]);}
+    const c=55+Math.floor(Math.abs(Math.sin(x.id*3))*30);
     return`<div class="prono-card">
       <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px;">
-        <div class="prono-title">${t.nom} — ${t.heure}</div>
-        <span class="${PRONO_TYPE==='digital'?'t-digital':'t-machine'} tc-type">${PRONO_TYPE==='digital'?'🖥️':'🎰'}</span>
+        <div class="prono-title">${x.nom} — ${x.heure}</div>
+        <span class="${PTYPE==='digital'?'t-digital':'t-machine'} tc-type">${PTYPE==='digital'?'🖥️':'🎰'}</span>
       </div>
       <div class="prono-label">SÉLECTION IA</div>
-      <div class="prono-nums">${prono.sort((a,b)=>a-b).map((n,i)=>`<div class="ball ${['ball-gold','ball-red','ball-blue','ball-green','ball-purple'][i]}" style="width:36px;height:36px;font-size:16px;">${n}</div>`).join('')}</div>
+      <div class="prono-nums">${p.sort((a,b)=>a-b).map((n,i)=>`<div class="ball ${BC[i]}" style="width:36px;height:36px;font-size:16px;">${n}</div>`).join('')}</div>
       <div style="display:flex;justify-content:space-between;margin-top:6px;">
-        <div style="font-size:9px;color:var(--muted);font-family:'Share Tech Mono'">Confiance: ${conf}%</div>
-        <div style="font-size:9px;color:var(--purple);font-family:'Share Tech Mono'">${HISTORIQUE.length} tirages</div>
+        <span style="font-size:9px;color:var(--muted);font-family:'Share Tech Mono'">Confiance: ${c}%</span>
+        <span style="font-size:9px;color:var(--purple);font-family:'Share Tech Mono'">100 tirages</span>
       </div>
-      <div class="conf-bar"><div class="conf-fill" style="width:${conf}%"></div></div>
+      <div class="conf-bar"><div class="conf-fill" style="width:${c}%"></div></div>
     </div>`;
   }).join('');
 }function renderTurbo(){
-  document.getElementById('turboSection').innerHTML=TIRAGES_LONACI.slice(0,6).map(t=>`
+  const BC2=['ball-gold','ball-blue'];
+  const BC3=['ball-gold','ball-red','ball-blue'];
+  const BC4=['ball-gold','ball-red','ball-blue','ball-green'];
+  document.getElementById('turboSection').innerHTML=TIRAGES.slice(0,6).map(t=>`
     <div class="turbo-card">
       <div class="turbo-name">${t.nom}</div>
       <div class="ball ball-gold" style="width:44px;height:44px;font-size:22px;margin:0 auto 6px;display:flex;align-items:center;justify-content:center;border-radius:50%;">${Math.floor(Math.abs(Math.sin(t.id*11))*90)+1}</div>
       <div class="turbo-label">${t.heure}</div>
     </div>`).join('');
-
-  document.getElementById('pari2Section').innerHTML=TIRAGES_LONACI.slice(0,4).map(t=>{
+  document.getElementById('pari2Section').innerHTML=TIRAGES.slice(0,4).map(t=>{
     const n=[Math.floor(Math.abs(Math.sin(t.id*7))*90)+1,Math.floor(Math.abs(Math.sin(t.id*13))*90)+1].sort((a,b)=>a-b);
-    return`<div class="tirage-card" style="margin-bottom:8px;"><div class="tc-header"><div class="tc-name">${t.nom}</div><span class="${t.type==='digital'?'t-digital':'t-machine'} tc-type">${t.type==='digital'?'🖥️':'🎰'}</span></div><div class="tc-body"><div class="balls">${n.map((x,i)=>`<div class="ball ${i===0?'ball-gold':'ball-blue'}" style="width:38px;height:38px;font-size:18px;">${x}</div>`).join('')}</div></div></div>`;
+    return`<div class="tirage-card" style="margin-bottom:8px;"><div class="tc-header"><div class="tc-name">${t.nom}</div><span class="${t.type==='digital'?'t-digital':'t-machine'} tc-type">${t.type==='digital'?'🖥️':'🎰'}</span></div><div class="tc-body"><div class="balls">${n.map((x,i)=>`<div class="ball ${BC2[i]}" style="width:38px;height:38px;font-size:18px;">${x}</div>`).join('')}</div></div></div>`;
   }).join('');
-
-  document.getElementById('pari3Section').innerHTML=TIRAGES_LONACI.slice(0,3).map(t=>{
+  document.getElementById('pari3Section').innerHTML=TIRAGES.slice(0,3).map(t=>{
     const n=[Math.floor(Math.abs(Math.sin(t.id*5))*90)+1,Math.floor(Math.abs(Math.sin(t.id*9))*90)+1,Math.floor(Math.abs(Math.sin(t.id*15))*90)+1].sort((a,b)=>a-b);
-    return`<div class="tirage-card" style="margin-bottom:8px;"><div class="tc-header"><div class="tc-name">${t.nom}</div><span class="${t.type==='digital'?'t-digital':'t-machine'} tc-type">${t.type==='digital'?'🖥️':'🎰'}</span></div><div class="tc-body"><div class="balls">${n.map((x,i)=>`<div class="ball ${['ball-gold','ball-red','ball-blue'][i]}" style="width:38px;height:38px;font-size:18px;">${x}</div>`).join('')}</div></div></div>`;
+    return`<div class="tirage-card" style="margin-bottom:8px;"><div class="tc-header"><div class="tc-name">${t.nom}</div><span class="${t.type==='digital'?'t-digital':'t-machine'} tc-type">${t.type==='digital'?'🖥️':'🎰'}</span></div><div class="tc-body"><div class="balls">${n.map((x,i)=>`<div class="ball ${BC3[i]}" style="width:38px;height:38px;font-size:18px;">${x}</div>`).join('')}</div></div></div>`;
   }).join('');
-
-  document.getElementById('pari4Section').innerHTML=TIRAGES_LONACI.slice(0,2).map(t=>{
+  document.getElementById('pari4Section').innerHTML=TIRAGES.slice(0,2).map(t=>{
     const n=[Math.floor(Math.abs(Math.sin(t.id*3))*90)+1,Math.floor(Math.abs(Math.sin(t.id*7))*90)+1,Math.floor(Math.abs(Math.sin(t.id*11))*90)+1,Math.floor(Math.abs(Math.sin(t.id*17))*90)+1].sort((a,b)=>a-b);
-    return`<div class="tirage-card" style="margin-bottom:8px;"><div class="tc-header"><div class="tc-name">${t.nom}</div><span class="${t.type==='digital'?'t-digital':'t-machine'} tc-type">${t.type==='digital'?'🖥️':'🎰'}</span></div><div class="tc-body"><div class="balls">${n.map((x,i)=>`<div class="ball ${['ball-gold','ball-red','ball-blue','ball-green'][i]}" style="width:38px;height:38px;font-size:18px;">${x}</div>`).join('')}</div></div></div>`;
+    return`<div class="tirage-card" style="margin-bottom:8px;"><div class="tc-header"><div class="tc-name">${t.nom}</div><span class="${t.type==='digital'?'t-digital':'t-machine'} tc-type">${t.type==='digital'?'🖥️':'🎰'}</span></div><div class="tc-body"><div class="balls">${n.map((x,i)=>`<div class="ball ${BC4[i]}" style="width:38px;height:38px;font-size:18px;">${x}</div>`).join('')}</div></div></div>`;
   }).join('');
 }
 
 function renderStats(){
-  const digitalTop=Object.entries(FREQ).sort(([,a],[,b])=>b.digital-a.digital).slice(0,10);
-  const maxD=Math.max(1,digitalTop[0][1].digital);
-  document.getElementById('hotNumsDigital').innerHTML=digitalTop.map(([n,f])=>`<div class="freq-row"><div class="freq-num">${n}</div><div class="freq-bar-wrap"><div class="freq-bar" style="width:${f.digital/maxD*100}%;background:linear-gradient(90deg,var(--cyan),var(--blue))"></div></div><div class="freq-count">${f.digital}x</div></div>`).join('');
-
-  const machineTop=Object.entries(FREQ).sort(([,a],[,b])=>b.machine-a.machine).slice(0,10);
-  const maxM=Math.max(1,machineTop[0][1].machine);
-  document.getElementById('hotNumsMachine').innerHTML=machineTop.map(([n,f])=>`<div class="freq-row"><div class="freq-num">${n}</div><div class="freq-bar-wrap"><div class="freq-bar" style="width:${f.machine/maxM*100}%;background:linear-gradient(90deg,var(--purple),var(--red))"></div></div><div class="freq-count">${f.machine}x</div></div>`).join('');
-
-  const coldTop=Object.entries(FREQ).sort(([,a],[,b])=>a.total-b.total).slice(0,10);
-  document.getElementById('coldNums').innerHTML=coldTop.map(([n,f])=>`<div class="freq-row"><div class="freq-num" style="color:var(--blue)">${n}</div><div class="freq-bar-wrap"><div class="freq-bar" style="width:${Math.max(5,f.total/maxD*100)}%;background:var(--blue)"></div></div><div class="freq-count">${f.total}x</div></div>`).join('');
-
-  const allNums=HISTORIQUE.flatMap(t=>t.boules);
-  const avg=allNums.length?(allNums.reduce((a,b)=>a+b,0)/allNums.length).toFixed(1):0;
-  const pairs=allNums.filter(n=>n%2===0).length;
+  const dTop=Object.entries(FREQ).sort(([,a],[,b])=>b.digital-a.digital).slice(0,10);
+  const mxD=Math.max(1,dTop[0][1].digital);
+  document.getElementById('hotNumsDigital').innerHTML=dTop.map(([n,f])=>`<div class="freq-row"><div class="freq-num">${n}</div><div class="freq-bar-wrap"><div class="freq-bar" style="width:${f.digital/mxD*100}%;background:linear-gradient(90deg,var(--cyan),var(--blue))"></div></div><div class="freq-count">${f.digital}x</div></div>`).join('');
+  const mTop=Object.entries(FREQ).sort(([,a],[,b])=>b.machine-a.machine).slice(0,10);
+  const mxM=Math.max(1,mTop[0][1].machine);
+  document.getElementById('hotNumsMachine').innerHTML=mTop.map(([n,f])=>`<div class="freq-row"><div class="freq-num">${n}</div><div class="freq-bar-wrap"><div class="freq-bar" style="width:${f.machine/mxM*100}%;background:linear-gradient(90deg,var(--purple),var(--red))"></div></div><div class="freq-count">${f.machine}x</div></div>`).join('');
+  const cTop=Object.entries(FREQ).sort(([,a],[,b])=>a.total-b.total).slice(0,10);
+  document.getElementById('coldNums').innerHTML=cTop.map(([n,f])=>`<div class="freq-row"><div class="freq-num" style="color:var(--blue)">${n}</div><div class="freq-bar-wrap"><div class="freq-bar" style="width:${Math.max(5,f.total/mxD*100)}%;background:var(--blue)"></div></div><div class="freq-count">${f.total}x</div></div>`).join('');
+  const allN=Object.values(FREQ).reduce((a,f)=>a+f.total,0);
+  const allP=Object.entries(FREQ).filter(([n])=>n%2===0).reduce((a,[,f])=>a+f.total,0);
   document.getElementById('globalStats').innerHTML=`<div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;">
-    <div class="tc-stat"><div class="tc-stat-l">TIRAGES</div><div class="tc-stat-v">${HISTORIQUE.length}</div></div>
-    <div class="tc-stat"><div class="tc-stat-l">MOYENNE</div><div class="tc-stat-v">${avg}</div></div>
-    <div class="tc-stat"><div class="tc-stat-l">PAIRS%</div><div class="tc-stat-v">${allNums.length?Math.round(pairs/allNums.length*100):0}%</div></div>
+    <div class="tc-stat"><div class="tc-stat-l">TIRAGES</div><div class="tc-stat-v">100</div></div>
+    <div class="tc-stat"><div class="tc-stat-l">NUMÉROS</div><div class="tc-stat-v">90</div></div>
+    <div class="tc-stat"><div class="tc-stat-l">PAIRS%</div><div class="tc-stat-v">${Math.round(allP/allN*100)}%</div></div>
   </div>`;
 }
 
-function buildContext(){
-  const d5=Object.entries(FREQ).sort(([,a],[,b])=>b.digital-a.digital).slice(0,5).map(([n])=>n).join(', ');
-  const m5=Object.entries(FREQ).sort(([,a],[,b])=>b.machine-a.machine).slice(0,5).map(([n])=>n).join(', ');
-  const c5=Object.entries(FREQ).sort(([,a],[,b])=>a.total-b.total).slice(0,5).map(([n])=>n).join(', ');
-  return`\nTop Digital: ${d5}. Top Machine: ${m5}. Retardataires: ${c5}. Dernier Digital: ${TIRAGES_LONACI[0].boules.join(', ')}. ${HISTORIQUE.length} tirages analysés.`;
+function buildCtx(){
+  const d5=Object.entries(FREQ).sort(([,a],[,b])=>b.digital-a.digital).slice(0,5).map(([n])=>n).join(',');
+  const m5=Object.entries(FREQ).sort(([,a],[,b])=>b.machine-a.machine).slice(0,5).map(([n])=>n).join(',');
+  const c5=Object.entries(FREQ).sort(([,a],[,b])=>a.total-b.total).slice(0,5).map(([n])=>n).join(',');
+  return` Top Digital:${d5}. Top Machine:${m5}. Retardataires:${c5}. Dernier:${TIRAGES[0].boules.join(',')}.`;
 }
 
 function quickAI(type){
-  const ctx=buildContext();
+  const ctx=buildCtx();
   const qs={
-    digital:`Génère une grille de 5 numéros pour le prochain tirage Digital Loto Bonheur LONACI Côte d'Ivoire. Justifie chaque numéro.${ctx}`,
-    machine:`Génère une grille de 5 numéros pour le prochain tirage Machine LONACI. Justifie.${ctx}`,
-    turbo:`Quel numéro Turbo (1 seul entre 1-90) pour le Loto CI ? Justifie.${ctx}`,
-    pari2:`2 numéros pour un Pari 2 au Loto Bonheur LONACI. Justifie.${ctx}`,
-    pari3:`3 numéros pour un Pari 3 au Loto Bonheur LONACI. Justifie.${ctx}`,
-    stats:`Analyse les tendances du Loto Bonheur LONACI: chauds, froids, retardataires. Conseils stratégiques.${ctx}`
+    digital:`Génère 5 numéros pour le tirage Digital Loto Bonheur LONACI CI. Justifie.${ctx}`,
+    machine:`Génère 5 numéros pour le tirage Machine LONACI CI. Justifie.${ctx}`,
+    turbo:`1 numéro Turbo pour Loto CI (1-90). Justifie.${ctx}`,
+    pari2:`2 numéros Pari 2 Loto Bonheur LONACI. Justifie.${ctx}`,
+    pari3:`3 numéros Pari 3 Loto Bonheur LONACI. Justifie.${ctx}`,
+    stats:`Analyse tendances Loto Bonheur LONACI CI: chauds, froids, retardataires.${ctx}`
   };
-  document.getElementById('aiInp').value=qs[type]||qs.digital;
+  document.getElementById('aiInp').value=qs[type];
   askAI();
 }
 
@@ -436,7 +428,7 @@ async function askAI(){
   try{
     const res=await fetch("https://api.anthropic.com/v1/messages",{method:"POST",headers:{"Content-Type":"application/json"},
       body:JSON.stringify({model:"claude-sonnet-4-20250514",max_tokens:1000,
-        system:`Tu es expert du Loto Bonheur LONACI Côte d'Ivoire. Grille 1-90. Tirages Digital (21h,23h,22h,Réveil 7h/8h,Afterwork) et Machine (Réveil,Étoile,Akwaba,National,Moaye,Fortune,Bénédiction,Diamant,Prestige,Weekend). Paris: Simple,Turbo,Pari 2/3/4/5. Donne conseils précis avec numéros. Rappelle que c'est un jeu de hasard. En français.`,
+        system:"Tu es expert Loto Bonheur LONACI Côte d'Ivoire. Grille 1-90. Tirages Digital et Machine. Paris: Turbo,Pari 2/3/4. Donne numéros précis avec justification. Rappelle que c'est un jeu de hasard. En français.",
         messages:[{role:"user",content:q}]})});
     const d=await res.json();
     t.style.display='none';
@@ -446,27 +438,16 @@ async function askAI(){
   inp.value='';
 }
 
-document.getElementById('aiInp').addEventListener('keydown',e=>{if(e.key==='Enter'&&!e.shiftKey){e.preventDefault();askAI();}});
+document.getElementById('aiInp').addEventListener('keydown',e=>{
+  if(e.key==='Enter'&&!e.shiftKey){e.preventDefault();askAI();}
+});
 
-function sw(id,tabEl,navEl){
-  document.querySelectorAll('.pg').forEach(p=>p.classList.remove('on'));
-  document.getElementById('pg-'+id).classList.add('on');
-  if(tabEl){document.querySelectorAll('.tab').forEach(t=>t.classList.remove('on'));tabEl.classList.add('on');}
-  if(navEl){document.querySelectorAll('.ni').forEach(n=>n.classList.remove('on'));navEl.classList.add('on');}
-  if(id==='prono'&&!_pronoLoaded){renderPronostics();_pronoLoaded=true;}
-  if(id==='turbo'&&!_turboLoaded){renderTurbo();_turboLoaded=true;}
-  if(id==='stats'&&!_statsLoaded){renderStats();_statsLoaded=true;}
-}
-
-// Démarrage rapide
+// Tout initialiser
 renderTirages();
-
-// Chargement lourd en arrière-plan
-setTimeout(()=>{
-  HISTORIQUE=generateHistorique();
-  calcFrequences();
-  renderMatrice();
-},200);
+renderMatrice();
+renderProno();
+renderTurbo();
+renderStats();
 </script>
 </body>
 </html>
