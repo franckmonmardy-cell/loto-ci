@@ -3,451 +3,404 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Loto CI — LONACI Expert</title>
-<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Share+Tech+Mono&display=swap" rel="stylesheet" media="print" onload="this.media='all'">
+<title>Loto CI</title>
 <style>
-:root{--bg:#0a0006;--card:#150010;--border:#2a0020;--gold:#ffd700;--gold2:#ffaa00;--green:#00e676;--red:#ff1744;--purple:#bf5af2;--orange:#ff9f0a;--blue:#42a5f5;--cyan:#00e5ff;--text:#fff5ff;--muted:#7a4a7a;}
 *{margin:0;padding:0;box-sizing:border-box;}
-body{background:var(--bg);color:var(--text);font-family:system-ui,sans-serif;max-width:430px;margin:0 auto;min-height:100vh;}
-.hdr{background:linear-gradient(180deg,#1a0015,var(--bg));padding:12px 14px 0;position:sticky;top:0;z-index:99;border-bottom:1px solid var(--border);}
-.logo{font-family:'Bebas Neue';font-size:24px;letter-spacing:3px;background:linear-gradient(135deg,var(--gold),var(--orange));-webkit-background-clip:text;-webkit-text-fill-color:transparent;}
-.live-badge{background:var(--red);color:#fff;font-size:9px;font-weight:700;padding:2px 6px;border-radius:2px;animation:blink 1.5s infinite;font-family:'Share Tech Mono';}
-@keyframes blink{0%,100%{opacity:1}50%{opacity:.3}}
-.tabs{display:flex;margin-top:10px;overflow-x:auto;scrollbar-width:none;}
+body{background:#0a0006;color:#fff5ff;font-family:system-ui,sans-serif;max-width:430px;margin:0 auto;}
+.hdr{background:#1a0015;padding:12px 14px;position:sticky;top:0;z-index:9;border-bottom:1px solid #2a0020;}
+.logo{font-size:20px;font-weight:900;color:#ffd700;letter-spacing:2px;}
+.tabs{display:flex;gap:0;margin-top:10px;overflow-x:auto;scrollbar-width:none;}
 .tabs::-webkit-scrollbar{display:none;}
-.tab{flex-shrink:0;padding:8px 12px;font-size:10px;font-weight:700;color:var(--muted);cursor:pointer;border-bottom:2px solid transparent;font-family:'Share Tech Mono';white-space:nowrap;}
-.tab.on{color:var(--gold);border-bottom-color:var(--gold);}
+.tab{flex-shrink:0;padding:8px 12px;font-size:11px;font-weight:700;color:#7a4a7a;cursor:pointer;border-bottom:2px solid transparent;white-space:nowrap;}
+.tab.on{color:#ffd700;border-bottom-color:#ffd700;}
 .pg{display:none;padding:12px;}
 .pg.on{display:block;}
-.hero{background:linear-gradient(135deg,#1a0020,#0a0010);border:1px solid rgba(255,215,0,.3);border-radius:14px;padding:14px;margin-bottom:12px;text-align:center;}
-.hero-t{font-family:'Bebas Neue';font-size:22px;letter-spacing:3px;background:linear-gradient(135deg,var(--gold),var(--orange));-webkit-background-clip:text;-webkit-text-fill-color:transparent;}
-.hero-s{font-size:11px;color:var(--muted);margin-top:4px;font-family:'Share Tech Mono';}
-.matrice-grid{display:grid;grid-template-columns:repeat(10,1fr);gap:3px;margin-bottom:12px;}
-.m-cell{aspect-ratio:1;display:flex;align-items:center;justify-content:center;font-family:'Bebas Neue';font-size:13px;border-radius:5px;cursor:pointer;transition:all .15s;border:1px solid var(--border);}
-.m-cell.hot{background:rgba(255,23,68,.15);color:var(--red);border-color:rgba(255,23,68,.3);}
-.m-cell.warm{background:rgba(255,159,10,.12);color:var(--orange);border-color:rgba(255,159,10,.25);}
-.m-cell.cold{background:rgba(66,165,245,.08);color:var(--blue);border-color:rgba(66,165,245,.2);}
-.m-cell.normal{background:rgba(255,255,255,.04);color:var(--muted);border-color:var(--border);}
-.m-cell.selected{background:var(--gold);color:#000;border-color:var(--gold);}
-.m-cell.result{background:rgba(0,230,118,.15);color:var(--green);border-color:rgba(0,230,118,.3);}
-.tirage-card{background:var(--card);border:1px solid var(--border);border-radius:12px;margin-bottom:10px;overflow:hidden;}
-.tc-header{padding:10px 13px;border-bottom:1px solid var(--border);display:flex;justify-content:space-between;align-items:center;}
-.tc-name{font-family:'Bebas Neue';font-size:14px;letter-spacing:1px;color:var(--gold);}
-.tc-date{font-size:9px;color:var(--muted);font-family:'Share Tech Mono';}
-.tc-type{font-size:8px;padding:2px 6px;border-radius:4px;font-family:'Share Tech Mono';font-weight:700;}
-.t-digital{background:rgba(0,229,255,.1);color:var(--cyan);border:1px solid rgba(0,229,255,.25);}
-.t-machine{background:rgba(191,90,242,.1);color:var(--purple);border:1px solid rgba(191,90,242,.25);}
-.tc-body{padding:12px 13px;}
-.balls{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:8px;}
-.ball{width:36px;height:36px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-family:'Bebas Neue';font-size:16px;font-weight:700;flex-shrink:0;}
-.ball-gold{background:linear-gradient(135deg,var(--gold),var(--gold2));color:#000;}
-.ball-red{background:linear-gradient(135deg,#ff1744,#c62828);color:#fff;}
-.ball-blue{background:linear-gradient(135deg,#42a5f5,#1565c0);color:#fff;}
-.ball-green{background:linear-gradient(135deg,#00e676,#2e7d32);color:#000;}
-.ball-purple{background:linear-gradient(135deg,#bf5af2,#7b1fa2);color:#fff;}
-.ball-machine{background:linear-gradient(135deg,#ff9f0a,#e65100);color:#fff;}
-.tc-stats{display:grid;grid-template-columns:1fr 1fr 1fr;gap:6px;}
-.tc-stat{text-align:center;background:rgba(255,255,255,.03);border-radius:7px;padding:6px;}
-.tc-stat-l{font-size:8px;color:var(--muted);font-family:'Share Tech Mono';}
-.tc-stat-v{font-family:'Bebas Neue';font-size:16px;color:var(--gold);}
-.prono-card{background:linear-gradient(135deg,#1a0020,#0a0010);border:1px solid rgba(191,90,242,.3);border-radius:12px;padding:13px;margin-bottom:10px;}
-.prono-title{font-family:'Bebas Neue';font-size:14px;letter-spacing:2px;color:var(--purple);margin-bottom:8px;}
-.prono-nums{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:8px;}
-.prono-label{font-size:9px;color:var(--muted);font-family:'Share Tech Mono';margin-bottom:4px;}
-.conf-bar{height:4px;background:rgba(255,255,255,.08);border-radius:2px;overflow:hidden;margin-top:4px;}
-.conf-fill{height:100%;border-radius:2px;background:linear-gradient(90deg,var(--purple),var(--cyan));}
-.stat-card{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:13px;margin-bottom:10px;}
-.stat-title{font-family:'Bebas Neue';font-size:13px;letter-spacing:2px;color:var(--muted);margin-bottom:10px;display:flex;align-items:center;gap:6px;}
-.stat-title::after{content:'';flex:1;height:1px;background:var(--border);}
-.freq-row{display:flex;justify-content:space-between;align-items:center;padding:5px 0;border-bottom:1px solid var(--border);}
-.freq-row:last-child{border-bottom:none;}
-.freq-num{font-family:'Bebas Neue';font-size:18px;color:var(--gold);}
-.freq-bar-wrap{flex:1;margin:0 10px;height:6px;background:rgba(255,255,255,.05);border-radius:3px;overflow:hidden;}
-.freq-bar{height:100%;border-radius:3px;}
-.freq-count{font-size:10px;color:var(--muted);font-family:'Share Tech Mono';min-width:30px;text-align:right;}
-.turbo-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:12px;}
-.turbo-card{background:var(--card);border:1px solid var(--border);border-radius:11px;padding:11px;text-align:center;}
-.turbo-name{font-family:'Bebas Neue';font-size:13px;letter-spacing:1px;color:var(--gold);margin-bottom:6px;}
-.turbo-label{font-size:9px;color:var(--muted);font-family:'Share Tech Mono';}
-.aibox{background:linear-gradient(135deg,#1a0020,#0a0010);border:1px solid var(--purple);border-radius:11px;padding:12px;margin-bottom:12px;}
-.ailbl{font-size:9px;letter-spacing:2px;color:var(--purple);font-family:'Share Tech Mono';margin-bottom:6px;}
+.b{width:38px;height:38px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:15px;font-weight:900;flex-shrink:0;}
+.b1{background:linear-gradient(135deg,#ffd700,#ff9f0a);color:#000;}
+.b2{background:linear-gradient(135deg,#ff1744,#c62828);color:#fff;}
+.b3{background:linear-gradient(135deg,#42a5f5,#1565c0);color:#fff;}
+.b4{background:linear-gradient(135deg,#00e676,#2e7d32);color:#000;}
+.b5{background:linear-gradient(135deg,#bf5af2,#7b1fa2);color:#fff;}
+.bm{background:linear-gradient(135deg,#ff9f0a,#e65100);color:#fff;width:32px;height:32px;font-size:13px;}
+.balls{display:flex;gap:6px;flex-wrap:wrap;margin:8px 0;}
+.card{background:#150010;border:1px solid #2a0020;border-radius:12px;margin-bottom:10px;overflow:hidden;}
+.card-hdr{padding:10px 13px;border-bottom:1px solid #2a0020;display:flex;justify-content:space-between;align-items:center;}
+.card-name{font-size:14px;font-weight:900;color:#ffd700;}
+.card-sub{font-size:9px;color:#7a4a7a;margin-top:2px;}
+.card-body{padding:12px 13px;}
+.tag{font-size:8px;padding:2px 7px;border-radius:4px;font-weight:700;}
+.td{background:rgba(0,229,255,.1);color:#00e5ff;border:1px solid rgba(0,229,255,.3);}
+.tm{background:rgba(191,90,242,.1);color:#bf5af2;border:1px solid rgba(191,90,242,.3);}
+.stats3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:6px;margin-top:8px;}
+.st{text-align:center;background:rgba(255,255,255,.03);border-radius:7px;padding:6px;}
+.stl{font-size:8px;color:#7a4a7a;}
+.stv{font-size:16px;font-weight:900;color:#ffd700;}
+.grid90{display:grid;grid-template-columns:repeat(10,1fr);gap:3px;}
+.gc{aspect-ratio:1;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:700;border-radius:4px;cursor:pointer;border:1px solid #2a0020;}
+.gc.hot{background:rgba(255,23,68,.2);color:#ff1744;border-color:rgba(255,23,68,.4);}
+.gc.warm{background:rgba(255,159,10,.15);color:#ff9f0a;border-color:rgba(255,159,10,.3);}
+.gc.cold{background:rgba(66,165,245,.1);color:#42a5f5;border-color:rgba(66,165,245,.25);}
+.gc.sel{background:#ffd700;color:#000;border-color:#ffd700;}
+.gc.res{background:rgba(0,230,118,.2);color:#00e676;border-color:rgba(0,230,118,.4);}
+.gc.nor{background:rgba(255,255,255,.04);color:#7a4a7a;}
+.pc{background:linear-gradient(135deg,#1a0020,#0a0010);border:1px solid rgba(191,90,242,.3);border-radius:12px;padding:12px;margin-bottom:10px;}
+.conf{height:4px;background:rgba(255,255,255,.08);border-radius:2px;overflow:hidden;margin-top:6px;}
+.conf-f{height:100%;border-radius:2px;background:linear-gradient(90deg,#bf5af2,#00e5ff);}
+.fr{display:flex;align-items:center;padding:5px 0;border-bottom:1px solid #2a0020;}
+.fr:last-child{border-bottom:none;}
+.fn{font-size:18px;font-weight:900;color:#ffd700;min-width:32px;}
+.fb{flex:1;margin:0 8px;height:6px;background:rgba(255,255,255,.05);border-radius:3px;overflow:hidden;}
+.fbi{height:100%;border-radius:3px;}
+.fc{font-size:10px;color:#7a4a7a;min-width:25px;text-align:right;}
+.aibox{background:linear-gradient(135deg,#1a0020,#0a0010);border:1px solid #bf5af2;border-radius:11px;padding:12px;margin-bottom:12px;}
 .airow{display:flex;gap:6px;}
-.aiinp{flex:1;background:rgba(255,255,255,.04);border:1px solid var(--border);border-radius:7px;padding:9px 10px;color:var(--text);font-size:13px;outline:none;resize:none;height:40px;}
-.aiinp:focus{border-color:var(--purple);}
-.aiinp::placeholder{color:var(--muted);}
-.aigo{background:var(--purple);color:#fff;border:none;border-radius:7px;width:40px;height:40px;font-size:17px;cursor:pointer;font-weight:700;}
-.airsp{margin-top:9px;display:none;}.airsp.v{display:block;}
-.aith{display:flex;align-items:center;gap:6px;color:var(--muted);font-size:11px;font-family:'Share Tech Mono';}
-.dots span{display:inline-block;width:4px;height:4px;background:var(--purple);border-radius:50%;animation:bo .8s infinite;margin:0 1px;}
-.dots span:nth-child(2){animation-delay:.15s}.dots span:nth-child(3){animation-delay:.3s}
+.aiinp{flex:1;background:rgba(255,255,255,.04);border:1px solid #2a0020;border-radius:7px;padding:9px;color:#fff5ff;font-size:13px;outline:none;resize:none;height:40px;}
+.aiinp:focus{border-color:#bf5af2;}
+.aiinp::placeholder{color:#7a4a7a;}
+.aibtn{background:#bf5af2;color:#fff;border:none;border-radius:7px;width:40px;height:40px;font-size:18px;cursor:pointer;}
+.aians{font-size:12px;line-height:1.7;margin-top:10px;display:none;}
+.aians.v{display:block;}
+.dots{display:flex;gap:3px;margin-top:8px;}
+.dot{width:5px;height:5px;background:#bf5af2;border-radius:50%;animation:bo .8s infinite;}
+.dot:nth-child(2){animation-delay:.15s;}.dot:nth-child(3){animation-delay:.3s;}
 @keyframes bo{0%,100%{transform:translateY(0)}50%{transform:translateY(-4px)}}
-.aiout{font-size:12px;line-height:1.65;display:none;}.aiout.v{display:block;}
-.qbtns{display:grid;grid-template-columns:1fr 1fr;gap:7px;margin-bottom:12px;}
-.qbtn{padding:10px;background:rgba(191,90,242,.08);border:1px solid rgba(191,90,242,.25);border-radius:8px;color:var(--purple);font-family:'Share Tech Mono';font-size:10px;cursor:pointer;text-align:center;}
-.bnav{position:fixed;bottom:0;left:50%;transform:translateX(-50%);width:100%;max-width:430px;background:#0d0008;border-top:1px solid var(--border);display:flex;padding:6px 0 14px;z-index:99;}
+.qg{display:grid;grid-template-columns:1fr 1fr 1fr;gap:6px;margin-bottom:12px;}
+.qb{padding:9px 6px;background:rgba(191,90,242,.08);border:1px solid rgba(191,90,242,.25);border-radius:8px;color:#bf5af2;font-size:10px;cursor:pointer;text-align:center;}
+.frow{display:flex;gap:5px;margin-bottom:10px;overflow-x:auto;scrollbar-width:none;}
+.frow::-webkit-scrollbar{display:none;}
+.fb2{flex-shrink:0;padding:5px 10px;border-radius:16px;font-size:10px;font-weight:700;border:1px solid #2a0020;color:#7a4a7a;cursor:pointer;}
+.fb2.on{border-color:rgba(255,215,0,.4);background:rgba(255,215,0,.1);color:#ffd700;}
+.nav{position:fixed;bottom:0;left:50%;transform:translateX(-50%);width:100%;max-width:430px;background:#0d0008;border-top:1px solid #2a0020;display:flex;padding:6px 0 12px;}
 .ni{flex:1;display:flex;flex-direction:column;align-items:center;gap:2px;cursor:pointer;}
-.ni-i{font-size:18px;}.ni-l{font-size:8px;font-weight:700;color:var(--muted);font-family:'Share Tech Mono';}
-.ni.on .ni-l{color:var(--gold);}
-.sp{height:78px;}
-.sec-t{font-family:'Bebas Neue';font-size:13px;letter-spacing:2px;color:var(--muted);margin:8px 0 6px;display:flex;align-items:center;gap:6px;}
-.sec-t::after{content:'';flex:1;height:1px;background:var(--border);}
-.filter-row{display:flex;gap:6px;margin-bottom:10px;overflow-x:auto;scrollbar-width:none;}
-.filter-row::-webkit-scrollbar{display:none;}
-.fbtn{flex-shrink:0;padding:5px 11px;border-radius:18px;font-size:10px;font-weight:700;border:1px solid var(--border);color:var(--muted);cursor:pointer;font-family:'Share Tech Mono';}
-.fbtn.on{border-color:rgba(255,215,0,.4);background:rgba(255,215,0,.1);color:var(--gold);}
+.ni-i{font-size:20px;}.ni-l{font-size:8px;font-weight:700;color:#7a4a7a;}
+.ni.on .ni-l{color:#ffd700;}
+.sp{height:72px;}
+.sec{font-size:12px;font-weight:700;color:#7a4a7a;letter-spacing:2px;margin:10px 0 6px;display:flex;align-items:center;gap:6px;}
+.sec::after{content:'';flex:1;height:1px;background:#2a0020;}
+.sel-box{background:#150010;border:1px solid #2a0020;border-radius:10px;padding:10px;margin-bottom:10px;min-height:52px;}
+.leg{display:flex;align-items:center;gap:4px;font-size:9px;}
+.leg-dot{width:10px;height:10px;border-radius:2px;}
 </style>
 </head>
 <body>
 <div class="hdr">
-  <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px;">
+  <div style="display:flex;justify-content:space-between;align-items:center;">
     <div class="logo">🎰 LOTO CI</div>
-    <div style="display:flex;align-items:center;gap:6px;">
-      <span style="font-size:9px;color:var(--muted);font-family:'Share Tech Mono'" id="hDate"></span>
-      <div class="live-badge">● LONACI</div>
-    </div>
+    <div style="font-size:10px;color:#bf5af2;font-weight:700;" id="hDate"></div>
   </div>
   <div class="tabs">
-    <div class="tab on" onclick="sw('resultats',this)">📊 Résultats</div>
-    <div class="tab" onclick="sw('matrice',this)">🔢 Matrice</div>
-    <div class="tab" onclick="sw('prono',this)">🎯 Pronostics</div>
-    <div class="tab" onclick="sw('turbo',this)">⚡ Turbo/2/3/4</div>
-    <div class="tab" onclick="sw('stats',this)">📈 Statistiques</div>
+    <div class="tab on" onclick="sw('res',this)">📊 Résultats</div>
+    <div class="tab" onclick="sw('mat',this)">🔢 Matrice</div>
+    <div class="tab" onclick="sw('pro',this)">🎯 Pronostics</div>
+    <div class="tab" onclick="sw('trb',this)">⚡ Turbo/2/3/4</div>
+    <div class="tab" onclick="sw('sta',this)">📈 Stats</div>
     <div class="tab" onclick="sw('ia',this)">🤖 IA</div>
   </div>
 </div>
-<div class="pg on" id="pg-resultats">
-  <div class="hero">
-    <div style="font-size:48px;margin-bottom:6px;">🎰</div>
-    <div class="hero-t">LOTO BONHEUR CI</div>
-    <div class="hero-s">LONACI — LOTERIE NATIONALE DE CÔTE D'IVOIRE</div>
+<div class="pg on" id="pg-res">
+  <div style="background:linear-gradient(135deg,#1a0020,#0a0010);border:1px solid rgba(255,215,0,.3);border-radius:12px;padding:14px;text-align:center;margin-bottom:12px;">
+    <div style="font-size:40px;margin-bottom:6px;">🎰</div>
+    <div style="font-size:18px;font-weight:900;color:#ffd700;letter-spacing:2px;">LOTO BONHEUR</div>
+    <div style="font-size:10px;color:#7a4a7a;margin-top:3px;">LONACI — CÔTE D'IVOIRE</div>
   </div>
-  <div class="filter-row">
-    <div class="fbtn on" data-f="all" onclick="filterTirages('all',this)">Tous</div>
-    <div class="fbtn" data-f="digital" onclick="filterTirages('digital',this)">🖥️ Digital</div>
-    <div class="fbtn" data-f="machine" onclick="filterTirages('machine',this)">🎰 Machine</div>
-    <div class="fbtn" data-f="reveil" onclick="filterTirages('reveil',this)">🌅 Réveil</div>
-    <div class="fbtn" data-f="etoile" onclick="filterTirages('etoile',this)">⭐ Étoile</div>
-    <div class="fbtn" data-f="akwaba" onclick="filterTirages('akwaba',this)">🤝 Akwaba</div>
-    <div class="fbtn" data-f="national" onclick="filterTirages('national',this)">🇨🇮 National</div>
+  <div class="frow">
+    <div class="fb2 on" data-f="all" onclick="fT('all',this)">Tous</div>
+    <div class="fb2" data-f="digital" onclick="fT('digital',this)">🖥️ Digital</div>
+    <div class="fb2" data-f="machine" onclick="fT('machine',this)">🎰 Machine</div>
+    <div class="fb2" data-f="reveil" onclick="fT('reveil',this)">🌅 Réveil</div>
+    <div class="fb2" data-f="etoile" onclick="fT('etoile',this)">⭐ Étoile</div>
+    <div class="fb2" data-f="national" onclick="fT('national',this)">🇨🇮 National</div>
   </div>
-  <div id="tiragesList"></div>
+  <div id="resList"></div>
   <div class="sp"></div>
 </div>
-<div class="pg" id="pg-matrice">
-  <div style="background:linear-gradient(135deg,#1a0020,#0a0010);border:1px solid rgba(255,215,0,.3);border-radius:13px;padding:13px;margin-bottom:12px;">
-    <div style="font-family:'Bebas Neue';font-size:16px;letter-spacing:2px;color:var(--gold);margin-bottom:4px;">🔢 MATRICE OFFICIELLE LONACI</div>
-    <div style="font-size:10px;color:var(--muted);font-family:'Share Tech Mono';margin-bottom:10px;">Grille 1-90 • Appuyez pour sélectionner</div>
-    <div class="matrice-grid" id="matriceGrid"></div>
-    <div style="display:flex;gap:8px;margin-top:8px;flex-wrap:wrap;">
-      <div style="display:flex;align-items:center;gap:4px;font-size:9px;color:var(--red)"><div style="width:10px;height:10px;border-radius:2px;background:rgba(255,23,68,.3)"></div>Chaud</div>
-      <div style="display:flex;align-items:center;gap:4px;font-size:9px;color:var(--orange)"><div style="width:10px;height:10px;border-radius:2px;background:rgba(255,159,10,.3)"></div>Tiède</div>
-      <div style="display:flex;align-items:center;gap:4px;font-size:9px;color:var(--blue)"><div style="width:10px;height:10px;border-radius:2px;background:rgba(66,165,245,.2)"></div>Froid</div>
-      <div style="display:flex;align-items:center;gap:4px;font-size:9px;color:var(--green)"><div style="width:10px;height:10px;border-radius:2px;background:rgba(0,230,118,.2)"></div>Résultat</div>
+<div class="pg" id="pg-mat">
+  <div class="card" style="margin-bottom:10px;">
+    <div class="card-hdr"><div><div class="card-name">🔢 MATRICE 1-90</div><div class="card-sub">Appuyez pour sélectionner • Max 5</div></div></div>
+    <div class="card-body">
+      <div class="grid90" id="grid90"></div>
+      <div style="display:flex;gap:10px;flex-wrap:wrap;margin-top:8px;">
+        <div class="leg"><div class="leg-dot" style="background:#ff1744"></div><span style="color:#ff1744">Chaud</span></div>
+        <div class="leg"><div class="leg-dot" style="background:#ff9f0a"></div><span style="color:#ff9f0a">Tiède</span></div>
+        <div class="leg"><div class="leg-dot" style="background:#42a5f5"></div><span style="color:#42a5f5">Froid</span></div>
+        <div class="leg"><div class="leg-dot" style="background:#00e676"></div><span style="color:#00e676">Résultat</span></div>
+      </div>
     </div>
   </div>
-  <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px;">
-    <div style="font-family:'Bebas Neue';font-size:13px;letter-spacing:2px;">MES SÉLECTIONS</div>
-    <button onclick="clearSelection()" style="padding:4px 10px;background:rgba(255,23,68,.08);border:1px solid rgba(255,23,68,.25);border-radius:6px;color:var(--red);font-family:'Share Tech Mono';font-size:9px;cursor:pointer;">EFFACER</button>
+  <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:6px;">
+    <div style="font-size:12px;font-weight:700;">MES NUMÉROS</div>
+    <button onclick="clrSel()" style="padding:4px 10px;background:rgba(255,23,68,.08);border:1px solid rgba(255,23,68,.3);border-radius:6px;color:#ff1744;font-size:9px;cursor:pointer;">EFFACER</button>
   </div>
-  <div id="selectionDisplay" style="background:var(--card);border:1px solid var(--border);border-radius:11px;padding:12px;margin-bottom:12px;min-height:60px;">
-    <div style="font-size:11px;color:var(--muted);font-family:'Share Tech Mono'">Appuyez sur des numéros dans la grille</div>
-  </div>
+  <div class="sel-box" id="selBox"><div style="font-size:11px;color:#7a4a7a;">Appuyez sur des numéros dans la grille</div></div>
   <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;">
-    <button onclick="genererAlea()" style="padding:11px;background:rgba(255,215,0,.1);border:1px solid rgba(255,215,0,.3);border-radius:9px;color:var(--gold);font-family:'Bebas Neue';font-size:13px;cursor:pointer;">🎲 ALÉATOIRE</button>
-    <button onclick="analyserSelection()" style="padding:11px;background:rgba(191,90,242,.1);border:1px solid rgba(191,90,242,.3);border-radius:9px;color:var(--purple);font-family:'Bebas Neue';font-size:13px;cursor:pointer;">🤖 ANALYSER</button>
+    <button onclick="aleaSel()" style="padding:11px;background:rgba(255,215,0,.1);border:1px solid rgba(255,215,0,.3);border-radius:9px;color:#ffd700;font-size:13px;font-weight:700;cursor:pointer;">🎲 ALÉATOIRE</button>
+    <button onclick="analyseSel()" style="padding:11px;background:rgba(191,90,242,.1);border:1px solid rgba(191,90,242,.3);border-radius:9px;color:#bf5af2;font-size:13px;font-weight:700;cursor:pointer;">🤖 ANALYSER</button>
   </div>
   <div class="sp"></div>
 </div>
-<div class="pg" id="pg-prono">
-  <div style="font-family:'Bebas Neue';font-size:16px;letter-spacing:2px;color:var(--gold);margin-bottom:10px;">🎯 PRONOSTICS DU JOUR</div>
-  <div class="filter-row">
-    <div class="fbtn on" data-p="digital" onclick="filterProno('digital',this)">🖥️ Digital</div>
-    <div class="fbtn" data-p="machine" onclick="filterProno('machine',this)">🎰 Machine</div>
+<div class="pg" id="pg-pro">
+  <div style="font-size:15px;font-weight:900;color:#ffd700;margin-bottom:10px;">🎯 PRONOSTICS DU JOUR</div>
+  <div class="frow">
+    <div class="fb2 on" data-p="digital" onclick="fP('digital',this)">🖥️ Digital</div>
+    <div class="fb2" data-p="machine" onclick="fP('machine',this)">🎰 Machine</div>
   </div>
-  <div id="pronoList"></div>
+  <div id="proList"></div>
   <div class="sp"></div>
 </div>
-<div class="pg" id="pg-turbo">
-  <div style="font-family:'Bebas Neue';font-size:16px;letter-spacing:2px;color:var(--gold);margin-bottom:10px;">⚡ TURBO — 2 — 3 — 4</div>
-  <div class="sec-t">⚡ TURBO (1 numéro)</div>
-  <div class="turbo-grid" id="turboSection"></div>
-  <div class="sec-t">2️⃣ PARI 2</div><div id="pari2Section"></div>
-  <div class="sec-t">3️⃣ PARI 3</div><div id="pari3Section"></div>
-  <div class="sec-t">4️⃣ PARI 4</div><div id="pari4Section"></div>
+<div class="pg" id="pg-trb">
+  <div style="font-size:15px;font-weight:900;color:#ffd700;margin-bottom:10px;">⚡ TURBO — PARI 2 — 3 — 4</div>
+  <div class="sec">⚡ TURBO — 1 NUMÉRO</div>
+  <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;margin-bottom:12px;" id="trbGrid"></div>
+  <div class="sec">2️⃣ PARI 2</div><div id="p2List"></div>
+  <div class="sec">3️⃣ PARI 3</div><div id="p3List"></div>
+  <div class="sec">4️⃣ PARI 4</div><div id="p4List"></div>
   <div class="sp"></div>
 </div>
-<div class="pg" id="pg-stats">
-  <div style="font-family:'Bebas Neue';font-size:16px;letter-spacing:2px;color:var(--gold);margin-bottom:10px;">📈 ANALYSE DES TIRAGES</div>
-  <div class="stat-card"><div class="stat-title">🔥 TOP NUMÉROS DIGITAL</div><div id="hotNumsDigital"></div></div>
-  <div class="stat-card"><div class="stat-title">🎰 TOP NUMÉROS MACHINE</div><div id="hotNumsMachine"></div></div>
-  <div class="stat-card"><div class="stat-title">❄️ RETARDATAIRES</div><div id="coldNums"></div></div>
-  <div class="stat-card"><div class="stat-title">📊 RÉSUMÉ</div><div id="globalStats"></div></div>
+<div class="pg" id="pg-sta">
+  <div style="font-size:15px;font-weight:900;color:#ffd700;margin-bottom:10px;">📈 STATISTIQUES — 100 TIRAGES</div>
+  <div class="card"><div class="card-hdr"><div class="card-name">🔥 TOP DIGITAL</div></div><div class="card-body" id="stD"></div></div>
+  <div class="card"><div class="card-hdr"><div class="card-name">🎰 TOP MACHINE</div></div><div class="card-body" id="stM"></div></div>
+  <div class="card"><div class="card-hdr"><div class="card-name">❄️ RETARDATAIRES</div></div><div class="card-body" id="stC"></div></div>
   <div class="sp"></div>
 </div>
 <div class="pg" id="pg-ia">
   <div class="aibox">
-    <div class="ailbl">◈ IA LOTO CI — ANALYSE & PRONOSTICS</div>
+    <div style="font-size:9px;color:#bf5af2;letter-spacing:2px;margin-bottom:6px;">◈ IA EXPERT LOTO CI</div>
     <div class="airow">
-      <textarea class="aiinp" id="aiInp" placeholder="Ex: Donne une grille Digital pour ce soir..." rows="1"></textarea>
-      <button class="aigo" onclick="askAI()">→</button>
+      <textarea class="aiinp" id="aiInp" placeholder="Ex: Donne une grille Digital pour ce soir..."></textarea>
+      <button class="aibtn" onclick="doAI()">→</button>
     </div>
-    <div class="airsp" id="aiR">
-      <div class="aith" id="aiTh"><span>Analyse en cours</span><div class="dots"><span></span><span></span><span></span></div></div>
-      <div class="aiout" id="aiO"></div>
-    </div>
+    <div id="aiWait" style="display:none;"><div class="dots"><div class="dot"></div><div class="dot"></div><div class="dot"></div></div></div>
+    <div class="aians" id="aiAns"></div>
   </div>
-  <div style="font-family:'Bebas Neue';font-size:14px;letter-spacing:2px;color:var(--text);margin-bottom:8px;">⚡ ANALYSE RAPIDE</div>
-  <div class="qbtns">
-    <button class="qbtn" onclick="quickAI('digital')">🖥️ Grille Digital</button>
-    <button class="qbtn" onclick="quickAI('machine')">🎰 Grille Machine</button>
-    <button class="qbtn" onclick="quickAI('turbo')">⚡ Numéro Turbo</button>
-    <button class="qbtn" onclick="quickAI('pari2')">2️⃣ Pari 2</button>
-    <button class="qbtn" onclick="quickAI('pari3')">3️⃣ Pari 3</button>
-    <button class="qbtn" onclick="quickAI('stats')">📈 Analyse Stats</button>
+  <div style="font-size:13px;font-weight:900;margin-bottom:8px;">⚡ ANALYSE RAPIDE</div>
+  <div class="qg">
+    <button class="qb" onclick="qAI('digital')">🖥️ Digital</button>
+    <button class="qb" onclick="qAI('machine')">🎰 Machine</button>
+    <button class="qb" onclick="qAI('turbo')">⚡ Turbo</button>
+    <button class="qb" onclick="qAI('p2')">2️⃣ Pari 2</button>
+    <button class="qb" onclick="qAI('p3')">3️⃣ Pari 3</button>
+    <button class="qb" onclick="qAI('stats')">📈 Stats</button>
   </div>
   <div class="sp"></div>
 </div>
-<div class="bnav">
-  <div class="ni on" onclick="sw('resultats',null,this)"><div class="ni-i">📊</div><div class="ni-l">RÉSULTATS</div></div>
-  <div class="ni" onclick="sw('matrice',null,this)"><div class="ni-i">🔢</div><div class="ni-l">MATRICE</div></div>
-  <div class="ni" onclick="sw('prono',null,this)"><div class="ni-i">🎯</div><div class="ni-l">PRONOS</div></div>
-  <div class="ni" onclick="sw('turbo',null,this)"><div class="ni-i">⚡</div><div class="ni-l">TURBO</div></div>
-  <div class="ni" onclick="sw('stats',null,this)"><div class="ni-i">📈</div><div class="ni-l">STATS</div></div>
+<div class="nav">
+  <div class="ni on" onclick="sw('res',null,this)"><div class="ni-i">📊</div><div class="ni-l">RÉSULTATS</div></div>
+  <div class="ni" onclick="sw('mat',null,this)"><div class="ni-i">🔢</div><div class="ni-l">MATRICE</div></div>
+  <div class="ni" onclick="sw('pro',null,this)"><div class="ni-i">🎯</div><div class="ni-l">PRONOS</div></div>
+  <div class="ni" onclick="sw('trb',null,this)"><div class="ni-i">⚡</div><div class="ni-l">TURBO</div></div>
+  <div class="ni" onclick="sw('sta',null,this)"><div class="ni-i">📈</div><div class="ni-l">STATS</div></div>
   <div class="ni" onclick="sw('ia',null,this)"><div class="ni-i">🤖</div><div class="ni-l">IA</div></div>
 </div><script>
-const TIRAGES=[
-  {id:1,nom:'Digital 21h',type:'digital',heure:'21h00',boules:[7,14,23,45,67],machine:null,date:'Aujourd\'hui'},
-  {id:2,nom:'Digital Réveil 7h',type:'digital',heure:'07h00',boules:[3,28,41,56,72],machine:null,date:'Aujourd\'hui'},
-  {id:3,nom:'Digital 23h',type:'digital',heure:'23h00',boules:[11,19,38,54,81],machine:null,date:'Aujourd\'hui'},
-  {id:4,nom:'Digital Réveil 8h',type:'digital',heure:'08h00',boules:[5,22,37,63,88],machine:null,date:'Aujourd\'hui'},
-  {id:5,nom:'Digital 22h',type:'digital',heure:'22h00',boules:[9,31,44,57,76],machine:null,date:'Aujourd\'hui'},
-  {id:6,nom:'Afterwork',type:'digital',heure:'18h30',boules:[13,27,42,68,83],machine:null,date:'Aujourd\'hui'},
-  {id:7,nom:'Réveil',type:'machine',heure:'07h30',boules:[4,17,35,52,79],machine:[22,46,71],date:'Aujourd\'hui'},
-  {id:8,nom:'Étoile',type:'machine',heure:'09h00',boules:[8,21,39,58,74],machine:[16,43,67],date:'Aujourd\'hui'},
-  {id:9,nom:'Akwaba',type:'machine',heure:'10h30',boules:[2,18,33,51,85],machine:[29,48,73],date:'Aujourd\'hui'},
-  {id:10,nom:'Monday Special',type:'machine',heure:'11h00',boules:[6,24,40,59,77],machine:[11,36,62],date:'Lundi'},
-  {id:11,nom:'La Matinale',type:'machine',heure:'11h30',boules:[15,26,44,61,82],machine:[8,34,56],date:'Aujourd\'hui'},
-  {id:12,nom:'Fortune',type:'machine',heure:'13h00',boules:[1,20,38,57,84],machine:[14,41,69],date:'Aujourd\'hui'},
-  {id:13,nom:'Midweek',type:'machine',heure:'14h00',boules:[10,23,47,66,78],machine:[19,38,72],date:'Mercredi'},
-  {id:14,nom:'National',type:'machine',heure:'14h30',boules:[3,16,34,55,80],machine:[25,49,71],date:'Aujourd\'hui'},
-  {id:15,nom:'Moaye',type:'machine',heure:'15h00',boules:[12,28,43,64,87],machine:[7,32,58],date:'Aujourd\'hui'},
-  {id:16,nom:'Bénédiction',type:'machine',heure:'17h00',boules:[5,19,41,60,76],machine:[21,44,68],date:'Aujourd\'hui'},
-  {id:17,nom:'Friday Bonanza',type:'machine',heure:'17h30',boules:[9,25,37,53,88],machine:[13,39,65],date:'Vendredi'},
-  {id:18,nom:'Diamant',type:'machine',heure:'19h00',boules:[6,22,45,62,83],machine:[18,42,70],date:'Aujourd\'hui'},
-  {id:19,nom:'Prestige',type:'machine',heure:'20h30',boules:[14,30,48,67,85],machine:[4,27,53],date:'Aujourd\'hui'},
-  {id:20,nom:'Special Weekend 1h',type:'machine',heure:'01h00',boules:[7,19,36,54,79],machine:[23,47,72],date:'Weekend'},
-  {id:21,nom:'Special Weekend 3h',type:'machine',heure:'03h00',boules:[11,28,42,61,86],machine:[15,38,64],date:'Weekend'},
+const T=[
+  {id:1,n:'Digital 21h',t:'digital',h:'21h00',b:[7,14,23,45,67],m:null,d:"Aujourd'hui"},
+  {id:2,n:'Digital Réveil 7h',t:'digital',h:'07h00',b:[3,28,41,56,72],m:null,d:"Aujourd'hui"},
+  {id:3,n:'Digital 23h',t:'digital',h:'23h00',b:[11,19,38,54,81],m:null,d:"Aujourd'hui"},
+  {id:4,n:'Digital Réveil 8h',t:'digital',h:'08h00',b:[5,22,37,63,88],m:null,d:"Aujourd'hui"},
+  {id:5,n:'Digital 22h',t:'digital',h:'22h00',b:[9,31,44,57,76],m:null,d:"Aujourd'hui"},
+  {id:6,n:'Afterwork',t:'digital',h:'18h30',b:[13,27,42,68,83],m:null,d:"Aujourd'hui"},
+  {id:7,n:'Réveil',t:'machine',h:'07h30',b:[4,17,35,52,79],m:[22,46,71],d:"Aujourd'hui"},
+  {id:8,n:'Étoile',t:'machine',h:'09h00',b:[8,21,39,58,74],m:[16,43,67],d:"Aujourd'hui"},
+  {id:9,n:'Akwaba',t:'machine',h:'10h30',b:[2,18,33,51,85],m:[29,48,73],d:"Aujourd'hui"},
+  {id:10,n:'Monday Special',t:'machine',h:'11h00',b:[6,24,40,59,77],m:[11,36,62],d:'Lundi'},
+  {id:11,n:'La Matinale',t:'machine',h:'11h30',b:[15,26,44,61,82],m:[8,34,56],d:"Aujourd'hui"},
+  {id:12,n:'Fortune',t:'machine',h:'13h00',b:[1,20,38,57,84],m:[14,41,69],d:"Aujourd'hui"},
+  {id:13,n:'Midweek',t:'machine',h:'14h00',b:[10,23,47,66,78],m:[19,38,72],d:'Mercredi'},
+  {id:14,n:'National',t:'machine',h:'14h30',b:[3,16,34,55,80],m:[25,49,71],d:"Aujourd'hui"},
+  {id:15,n:'Moaye',t:'machine',h:'15h00',b:[12,28,43,64,87],m:[7,32,58],d:"Aujourd'hui"},
+  {id:16,n:'Bénédiction',t:'machine',h:'17h00',b:[5,19,41,60,76],m:[21,44,68],d:"Aujourd'hui"},
+  {id:17,n:'Friday Bonanza',t:'machine',h:'17h30',b:[9,25,37,53,88],m:[13,39,65],d:'Vendredi'},
+  {id:18,n:'Diamant',t:'machine',h:'19h00',b:[6,22,45,62,83],m:[18,42,70],d:"Aujourd'hui"},
+  {id:19,n:'Prestige',t:'machine',h:'20h30',b:[14,30,48,67,85],m:[4,27,53],d:"Aujourd'hui"},
+  {id:20,n:'Special Weekend 1h',t:'machine',h:'01h00',b:[7,19,36,54,79],m:[23,47,72],d:'Weekend'},
+  {id:21,n:'Special Weekend 3h',t:'machine',h:'03h00',b:[11,28,42,61,86],m:[15,38,64],d:'Weekend'},
 ];
 
-// Fréquences
-const FREQ={};
-for(let i=1;i<=90;i++)FREQ[i]={digital:0,machine:0,total:0};
+const F={};
+for(let i=1;i<=90;i++)F[i]={d:0,m:0,tot:0};
 for(let i=0;i<100;i++){
-  const nums=[];
-  while(nums.length<5){const n=Math.floor(Math.abs(Math.sin(12345+i*17+nums.length*31))*90)+1;if(!nums.includes(n))nums.push(n);}
-  const type=i%2===0?'digital':'machine';
-  nums.forEach(n=>{FREQ[n][type]++;FREQ[n].total++;});
+  const ns=[],tp=i%2===0?'d':'m';
+  while(ns.length<5){const n=Math.floor(Math.abs(Math.sin(12345+i*17+ns.length*31))*90)+1;if(!ns.includes(n))ns.push(n);}
+  ns.forEach(n=>{F[n][tp]++;F[n].tot++;});
 }
 
-let SEL=[];
-let PTYPE='digital';
-let CFILT='all';
+const BC=['b1','b2','b3','b4','b5'];
+let SEL=[],CF='all',PT='digital';
 
-const now=new Date();
-const J=['Dim','Lun','Mar','Mer','Jeu','Ven','Sam'];
-const M=['Jan','Fév','Mar','Avr','Mai','Jun','Jul','Aoû','Sep','Oct','Nov','Déc'];
-document.getElementById('hDate').textContent=`${J[now.getDay()]} ${now.getDate()} ${M[now.getMonth()]}`;
+const nw=new Date();
+document.getElementById('hDate').textContent=['Dim','Lun','Mar','Mer','Jeu','Ven','Sam'][nw.getDay()]+' '+nw.getDate()+' '+['Jan','Fév','Mar','Avr','Mai','Jun','Jul','Aoû','Sep','Oct','Nov','Déc'][nw.getMonth()];
 
-function sw(id,tabEl,navEl){
+function sw(id,tEl,nEl){
   document.querySelectorAll('.pg').forEach(p=>p.classList.remove('on'));
   document.getElementById('pg-'+id).classList.add('on');
-  if(tabEl){document.querySelectorAll('.tab').forEach(t=>t.classList.remove('on'));tabEl.classList.add('on');}
-  if(navEl){document.querySelectorAll('.ni').forEach(n=>n.classList.remove('on'));navEl.classList.add('on');}
+  if(tEl){document.querySelectorAll('.tab').forEach(t=>t.classList.remove('on'));tEl.classList.add('on');}
+  if(nEl){document.querySelectorAll('.ni').forEach(n=>n.classList.remove('on'));nEl.classList.add('on');}
 }
 
-function filterTirages(f,el){
-  CFILT=f;
-  document.querySelectorAll('[data-f]').forEach(b=>b.classList.remove('on'));
-  el.classList.add('on');
-  renderTirages();
-}
-
-function renderTirages(){
-  let t=TIRAGES;
-  if(CFILT!=='all'){
-    if(['digital','machine'].includes(CFILT))t=t.filter(x=>x.type===CFILT);
-    else t=t.filter(x=>x.nom.toLowerCase().includes(CFILT));
+function fT(f,el){CF=f;document.querySelectorAll('[data-f]').forEach(b=>b.classList.remove('on'));el.classList.add('on');rRes();}
+function rRes(){
+  let ts=T;
+  if(CF!=='all'){
+    if(['digital','machine'].includes(CF))ts=ts.filter(x=>x.t===CF);
+    else ts=ts.filter(x=>x.n.toLowerCase().includes(CF));
   }
-  const BC=['ball-gold','ball-red','ball-blue','ball-green','ball-purple'];
-  document.getElementById('tiragesList').innerHTML=t.map(x=>`
-    <div class="tirage-card">
-      <div class="tc-header">
-        <div><div class="tc-name">${x.nom}</div><div class="tc-date">${x.date} • ${x.heure}</div></div>
-        <span class="${x.type==='digital'?'t-digital':'t-machine'} tc-type">${x.type==='digital'?'🖥️ DIGITAL':'🎰 MACHINE'}</span>
+  document.getElementById('resList').innerHTML=ts.map(x=>`
+    <div class="card">
+      <div class="card-hdr">
+        <div><div class="card-name">${x.n}</div><div class="card-sub">${x.d} • ${x.h}</div></div>
+        <span class="tag ${x.t==='digital'?'td':'tm'}">${x.t==='digital'?'🖥️ DIGITAL':'🎰 MACHINE'}</span>
       </div>
-      <div class="tc-body">
-        <div style="font-size:9px;color:var(--muted);font-family:'Share Tech Mono';margin-bottom:6px;">BOULES TIRÉES</div>
-        <div class="balls">${x.boules.map((n,i)=>`<div class="ball ${BC[i]}">${n}</div>`).join('')}</div>
-        ${x.machine?`<div style="font-size:9px;color:var(--purple);font-family:'Share Tech Mono';margin:6px 0;">🎰 MACHINE</div><div class="balls">${x.machine.map(n=>`<div class="ball ball-machine" style="width:32px;height:32px;font-size:14px;">${n}</div>`).join('')}</div>`:''}
-        <div class="tc-stats">
-          <div class="tc-stat"><div class="tc-stat-l">SOMME</div><div class="tc-stat-v">${x.boules.reduce((a,b)=>a+b,0)}</div></div>
-          <div class="tc-stat"><div class="tc-stat-l">ÉCART</div><div class="tc-stat-v">${Math.max(...x.boules)-Math.min(...x.boules)}</div></div>
-          <div class="tc-stat"><div class="tc-stat-l">PAIRS</div><div class="tc-stat-v">${x.boules.filter(n=>n%2===0).length}/5</div></div>
+      <div class="card-body">
+        <div class="balls">${x.b.map((n,i)=>`<span class="b ${BC[i]}">${n}</span>`).join('')}</div>
+        ${x.m?`<div style="font-size:9px;color:#bf5af2;margin:4px 0 6px;">🎰 Machine</div><div class="balls">${x.m.map(n=>`<span class="b bm">${n}</span>`).join('')}</div>`:''}
+        <div class="stats3">
+          <div class="st"><div class="stl">SOMME</div><div class="stv">${x.b.reduce((a,b)=>a+b,0)}</div></div>
+          <div class="st"><div class="stl">ÉCART</div><div class="stv">${Math.max(...x.b)-Math.min(...x.b)}</div></div>
+          <div class="st"><div class="stl">PAIRS</div><div class="stv">${x.b.filter(n=>n%2===0).length}/5</div></div>
         </div>
       </div>
     </div>`).join('');
 }
 
-function renderMatrice(){
-  const mxF=Math.max(1,...Object.values(FREQ).map(f=>f.total));
-  const lb=TIRAGES[0].boules;
-  let h='';
+function rMat(){
+  const mx=Math.max(1,...Object.values(F).map(f=>f.tot));
+  const lb=T[0].b;let h='';
   for(let i=1;i<=90;i++){
-    const r=FREQ[i].total/mxF;
-    const cls=SEL.includes(i)?'selected':lb.includes(i)?'result':r>0.7?'hot':r>0.4?'warm':r<0.2?'cold':'normal';
-    h+=`<div class="m-cell ${cls}" onclick="tN(${i})" id="mc${i}">${i}</div>`;
+    const r=F[i].tot/mx;
+    const c=SEL.includes(i)?'sel':lb.includes(i)?'res':r>0.7?'hot':r>0.4?'warm':r<0.2?'cold':'nor';
+    h+=`<div class="gc ${c}" onclick="tgl(${i})" id="c${i}">${i}</div>`;
   }
-  document.getElementById('matriceGrid').innerHTML=h;
+  document.getElementById('grid90').innerHTML=h;
 }
 
-function tN(n){
+function tgl(n){
   const i=SEL.indexOf(n);
   if(i>=0)SEL.splice(i,1);
   else if(SEL.length<5)SEL.push(n);
   else{SEL.shift();SEL.push(n);}
-  updSel();
+  updMat();
 }
 
-function updSel(){
-  const lb=TIRAGES[0].boules;
-  const mxF=Math.max(1,...Object.values(FREQ).map(f=>f.total));
+function updMat(){
+  const mx=Math.max(1,...Object.values(F).map(f=>f.tot));
+  const lb=T[0].b;
   for(let i=1;i<=90;i++){
-    const el=document.getElementById('mc'+i);if(!el)continue;
-    const r=FREQ[i].total/mxF;
-    el.className=`m-cell ${SEL.includes(i)?'selected':lb.includes(i)?'result':r>0.7?'hot':r>0.4?'warm':r<0.2?'cold':'normal'}`;
+    const el=document.getElementById('c'+i);if(!el)continue;
+    const r=F[i].tot/mx;
+    el.className=`gc ${SEL.includes(i)?'sel':lb.includes(i)?'res':r>0.7?'hot':r>0.4?'warm':r<0.2?'cold':'nor'}`;
   }
-  const d=document.getElementById('selectionDisplay');
-  if(!SEL.length){d.innerHTML='<div style="font-size:11px;color:var(--muted);font-family:\'Share Tech Mono\'">Appuyez sur des numéros</div>';return;}
-  d.innerHTML=`<div style="display:flex;gap:8px;flex-wrap:wrap;align-items:center;">${[...SEL].sort((a,b)=>a-b).map(n=>`<div class="ball ball-gold" style="width:38px;height:38px;font-size:17px;">${n}</div>`).join('')}<span style="font-size:10px;color:var(--muted);margin-left:4px;">${SEL.length}/5</span></div>`;
+  const sb=document.getElementById('selBox');
+  if(!SEL.length){sb.innerHTML='<div style="font-size:11px;color:#7a4a7a;">Appuyez sur des numéros dans la grille</div>';return;}
+  sb.innerHTML=`<div class="balls">${[...SEL].sort((a,b)=>a-b).map(n=>`<span class="b b1">${n}</span>`).join('')}<span style="font-size:10px;color:#7a4a7a;align-self:center;margin-left:4px;">${SEL.length}/5</span></div>`;
 }
 
-function clearSelection(){SEL=[];updSel();}
-function genererAlea(){SEL=[];while(SEL.length<5){const n=Math.floor(Math.random()*90)+1;if(!SEL.includes(n))SEL.push(n);}updSel();}
-function analyserSelection(){if(!SEL.length)return;document.getElementById('aiInp').value=`Analyse ma grille: ${[...SEL].sort((a,b)=>a-b).join(', ')} pour le Loto Bonheur LONACI.`;sw('ia',document.querySelectorAll('.tab')[5]);askAI();}
+function clrSel(){SEL=[];updMat();}
+function aleaSel(){SEL=[];while(SEL.length<5){const n=Math.floor(Math.random()*90)+1;if(!SEL.includes(n))SEL.push(n);}updMat();}
+function analyseSel(){if(!SEL.length)return;document.getElementById('aiInp').value=`Analyse ma grille Loto CI: ${[...SEL].sort((a,b)=>a-b).join(', ')}.`;sw('ia',document.querySelectorAll('.tab')[5]);doAI();}
 
-function filterProno(type,el){PTYPE=type;document.querySelectorAll('[data-p]').forEach(b=>b.classList.remove('on'));el.classList.add('on');renderProno();}
-
-function renderProno(){
-  const t=TIRAGES.filter(x=>x.type===PTYPE);
-  const top=Object.entries(FREQ).sort(([,a],[,b])=>b[PTYPE]-a[PTYPE]).slice(0,20).map(([n])=>parseInt(n));
-  const BC=['ball-gold','ball-red','ball-blue','ball-green','ball-purple'];
-  document.getElementById('pronoList').innerHTML=t.map(x=>{
+function fP(p,el){PT=p;document.querySelectorAll('[data-p]').forEach(b=>b.classList.remove('on'));el.classList.add('on');rPro();}
+function rPro(){
+  const ts=T.filter(x=>x.t===PT);
+  const top=Object.entries(F).sort(([,a],[,b])=>b[PT==='digital'?'d':'m']-a[PT==='digital'?'d':'m']).slice(0,20).map(([n])=>+n);
+  document.getElementById('proList').innerHTML=ts.map(x=>{
     const p=[];while(p.length<5){const i=Math.floor(Math.abs(Math.sin(x.id*7+p.length*13))*top.length);if(!p.includes(top[i]))p.push(top[i]);}
     const c=55+Math.floor(Math.abs(Math.sin(x.id*3))*30);
-    return`<div class="prono-card">
+    return`<div class="pc">
       <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px;">
-        <div class="prono-title">${x.nom} — ${x.heure}</div>
-        <span class="${PTYPE==='digital'?'t-digital':'t-machine'} tc-type">${PTYPE==='digital'?'🖥️':'🎰'}</span>
+        <div style="font-size:13px;font-weight:900;color:#bf5af2;">${x.n} — ${x.h}</div>
+        <span class="tag ${PT==='digital'?'td':'tm'}">${PT==='digital'?'🖥️':'🎰'}</span>
       </div>
-      <div class="prono-label">SÉLECTION IA</div>
-      <div class="prono-nums">${p.sort((a,b)=>a-b).map((n,i)=>`<div class="ball ${BC[i]}" style="width:36px;height:36px;font-size:16px;">${n}</div>`).join('')}</div>
-      <div style="display:flex;justify-content:space-between;margin-top:6px;">
-        <span style="font-size:9px;color:var(--muted);font-family:'Share Tech Mono'">Confiance: ${c}%</span>
-        <span style="font-size:9px;color:var(--purple);font-family:'Share Tech Mono'">100 tirages</span>
+      <div style="font-size:9px;color:#7a4a7a;margin-bottom:6px;">SÉLECTION IA</div>
+      <div class="balls">${p.sort((a,b)=>a-b).map((n,i)=>`<span class="b ${BC[i]}">${n}</span>`).join('')}</div>
+      <div style="display:flex;justify-content:space-between;font-size:9px;color:#7a4a7a;margin-top:4px;">
+        <span>Confiance: ${c}%</span><span>100 tirages</span>
       </div>
-      <div class="conf-bar"><div class="conf-fill" style="width:${c}%"></div></div>
+      <div class="conf"><div class="conf-f" style="width:${c}%"></div></div>
     </div>`;
   }).join('');
-}function renderTurbo(){
-  const BC2=['ball-gold','ball-blue'];
-  const BC3=['ball-gold','ball-red','ball-blue'];
-  const BC4=['ball-gold','ball-red','ball-blue','ball-green'];
-  document.getElementById('turboSection').innerHTML=TIRAGES.slice(0,6).map(t=>`
-    <div class="turbo-card">
-      <div class="turbo-name">${t.nom}</div>
-      <div class="ball ball-gold" style="width:44px;height:44px;font-size:22px;margin:0 auto 6px;display:flex;align-items:center;justify-content:center;border-radius:50%;">${Math.floor(Math.abs(Math.sin(t.id*11))*90)+1}</div>
-      <div class="turbo-label">${t.heure}</div>
+}function rTrb(){
+  const mk=(ids,nb)=>T.slice(0,nb).map(x=>{
+    const ns=ids.map(s=>Math.floor(Math.abs(Math.sin(x.id*s))*90)+1).sort((a,b)=>a-b);
+    return`<div class="card" style="margin-bottom:8px;"><div class="card-hdr"><div class="card-name">${x.n}</div><span class="tag ${x.t==='digital'?'td':'tm'}">${x.t==='digital'?'🖥️':'🎰'}</span></div><div class="card-body"><div class="balls">${ns.map((n,i)=>`<span class="b ${BC[i]}">${n}</span>`).join('')}</div></div></div>`;
+  }).join('');
+  document.getElementById('trbGrid').innerHTML=T.slice(0,6).map(x=>`
+    <div class="card" style="text-align:center;padding:10px;">
+      <div style="font-size:11px;font-weight:700;color:#ffd700;margin-bottom:6px;">${x.n}</div>
+      <span class="b b1" style="margin:0 auto 6px;">${Math.floor(Math.abs(Math.sin(x.id*11))*90)+1}</span>
+      <div style="font-size:9px;color:#7a4a7a;margin-top:6px;">${x.h}</div>
     </div>`).join('');
-  document.getElementById('pari2Section').innerHTML=TIRAGES.slice(0,4).map(t=>{
-    const n=[Math.floor(Math.abs(Math.sin(t.id*7))*90)+1,Math.floor(Math.abs(Math.sin(t.id*13))*90)+1].sort((a,b)=>a-b);
-    return`<div class="tirage-card" style="margin-bottom:8px;"><div class="tc-header"><div class="tc-name">${t.nom}</div><span class="${t.type==='digital'?'t-digital':'t-machine'} tc-type">${t.type==='digital'?'🖥️':'🎰'}</span></div><div class="tc-body"><div class="balls">${n.map((x,i)=>`<div class="ball ${BC2[i]}" style="width:38px;height:38px;font-size:18px;">${x}</div>`).join('')}</div></div></div>`;
-  }).join('');
-  document.getElementById('pari3Section').innerHTML=TIRAGES.slice(0,3).map(t=>{
-    const n=[Math.floor(Math.abs(Math.sin(t.id*5))*90)+1,Math.floor(Math.abs(Math.sin(t.id*9))*90)+1,Math.floor(Math.abs(Math.sin(t.id*15))*90)+1].sort((a,b)=>a-b);
-    return`<div class="tirage-card" style="margin-bottom:8px;"><div class="tc-header"><div class="tc-name">${t.nom}</div><span class="${t.type==='digital'?'t-digital':'t-machine'} tc-type">${t.type==='digital'?'🖥️':'🎰'}</span></div><div class="tc-body"><div class="balls">${n.map((x,i)=>`<div class="ball ${BC3[i]}" style="width:38px;height:38px;font-size:18px;">${x}</div>`).join('')}</div></div></div>`;
-  }).join('');
-  document.getElementById('pari4Section').innerHTML=TIRAGES.slice(0,2).map(t=>{
-    const n=[Math.floor(Math.abs(Math.sin(t.id*3))*90)+1,Math.floor(Math.abs(Math.sin(t.id*7))*90)+1,Math.floor(Math.abs(Math.sin(t.id*11))*90)+1,Math.floor(Math.abs(Math.sin(t.id*17))*90)+1].sort((a,b)=>a-b);
-    return`<div class="tirage-card" style="margin-bottom:8px;"><div class="tc-header"><div class="tc-name">${t.nom}</div><span class="${t.type==='digital'?'t-digital':'t-machine'} tc-type">${t.type==='digital'?'🖥️':'🎰'}</span></div><div class="tc-body"><div class="balls">${n.map((x,i)=>`<div class="ball ${BC4[i]}" style="width:38px;height:38px;font-size:18px;">${x}</div>`).join('')}</div></div></div>`;
-  }).join('');
+  document.getElementById('p2List').innerHTML=mk([7,13],4);
+  document.getElementById('p3List').innerHTML=mk([5,9,15],3);
+  document.getElementById('p4List').innerHTML=mk([3,7,11,17],2);
 }
 
-function renderStats(){
-  const dTop=Object.entries(FREQ).sort(([,a],[,b])=>b.digital-a.digital).slice(0,10);
-  const mxD=Math.max(1,dTop[0][1].digital);
-  document.getElementById('hotNumsDigital').innerHTML=dTop.map(([n,f])=>`<div class="freq-row"><div class="freq-num">${n}</div><div class="freq-bar-wrap"><div class="freq-bar" style="width:${f.digital/mxD*100}%;background:linear-gradient(90deg,var(--cyan),var(--blue))"></div></div><div class="freq-count">${f.digital}x</div></div>`).join('');
-  const mTop=Object.entries(FREQ).sort(([,a],[,b])=>b.machine-a.machine).slice(0,10);
-  const mxM=Math.max(1,mTop[0][1].machine);
-  document.getElementById('hotNumsMachine').innerHTML=mTop.map(([n,f])=>`<div class="freq-row"><div class="freq-num">${n}</div><div class="freq-bar-wrap"><div class="freq-bar" style="width:${f.machine/mxM*100}%;background:linear-gradient(90deg,var(--purple),var(--red))"></div></div><div class="freq-count">${f.machine}x</div></div>`).join('');
-  const cTop=Object.entries(FREQ).sort(([,a],[,b])=>a.total-b.total).slice(0,10);
-  document.getElementById('coldNums').innerHTML=cTop.map(([n,f])=>`<div class="freq-row"><div class="freq-num" style="color:var(--blue)">${n}</div><div class="freq-bar-wrap"><div class="freq-bar" style="width:${Math.max(5,f.total/mxD*100)}%;background:var(--blue)"></div></div><div class="freq-count">${f.total}x</div></div>`).join('');
-  const allN=Object.values(FREQ).reduce((a,f)=>a+f.total,0);
-  const allP=Object.entries(FREQ).filter(([n])=>n%2===0).reduce((a,[,f])=>a+f.total,0);
-  document.getElementById('globalStats').innerHTML=`<div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;">
-    <div class="tc-stat"><div class="tc-stat-l">TIRAGES</div><div class="tc-stat-v">100</div></div>
-    <div class="tc-stat"><div class="tc-stat-l">NUMÉROS</div><div class="tc-stat-v">90</div></div>
-    <div class="tc-stat"><div class="tc-stat-l">PAIRS%</div><div class="tc-stat-v">${Math.round(allP/allN*100)}%</div></div>
-  </div>`;
-}
-
-function buildCtx(){
-  const d5=Object.entries(FREQ).sort(([,a],[,b])=>b.digital-a.digital).slice(0,5).map(([n])=>n).join(',');
-  const m5=Object.entries(FREQ).sort(([,a],[,b])=>b.machine-a.machine).slice(0,5).map(([n])=>n).join(',');
-  const c5=Object.entries(FREQ).sort(([,a],[,b])=>a.total-b.total).slice(0,5).map(([n])=>n).join(',');
-  return` Top Digital:${d5}. Top Machine:${m5}. Retardataires:${c5}. Dernier:${TIRAGES[0].boules.join(',')}.`;
-}
-
-function quickAI(type){
-  const ctx=buildCtx();
-  const qs={
-    digital:`Génère 5 numéros pour le tirage Digital Loto Bonheur LONACI CI. Justifie.${ctx}`,
-    machine:`Génère 5 numéros pour le tirage Machine LONACI CI. Justifie.${ctx}`,
-    turbo:`1 numéro Turbo pour Loto CI (1-90). Justifie.${ctx}`,
-    pari2:`2 numéros Pari 2 Loto Bonheur LONACI. Justifie.${ctx}`,
-    pari3:`3 numéros Pari 3 Loto Bonheur LONACI. Justifie.${ctx}`,
-    stats:`Analyse tendances Loto Bonheur LONACI CI: chauds, froids, retardataires.${ctx}`
+function rSta(){
+  const mk=(key,color)=>{
+    const top=Object.entries(F).sort(([,a],[,b])=>b[key]-a[key]).slice(0,10);
+    const mx=Math.max(1,top[0][1][key]);
+    return top.map(([n,f])=>`<div class="fr"><div class="fn">${n}</div><div class="fb"><div class="fbi" style="width:${f[key]/mx*100}%;background:${color}"></div></div><div class="fc">${f[key]}x</div></div>`).join('');
   };
-  document.getElementById('aiInp').value=qs[type];
-  askAI();
+  document.getElementById('stD').innerHTML=mk('d','linear-gradient(90deg,#00e5ff,#42a5f5)');
+  document.getElementById('stM').innerHTML=mk('m','linear-gradient(90deg,#bf5af2,#ff1744)');
+  const cold=Object.entries(F).sort(([,a],[,b])=>a.tot-b.tot).slice(0,10);
+  const mx2=Math.max(1,cold[cold.length-1][1].tot);
+  document.getElementById('stC').innerHTML=cold.map(([n,f])=>`<div class="fr"><div class="fn" style="color:#42a5f5">${n}</div><div class="fb"><div class="fbi" style="width:${Math.max(5,f.tot/mx2*100)}%;background:#42a5f5"></div></div><div class="fc">${f.tot}x</div></div>`).join('');
 }
 
-async function askAI(){
-  const inp=document.getElementById('aiInp'),q=inp.value.trim();if(!q)return;
-  const r=document.getElementById('aiR'),t=document.getElementById('aiTh'),o=document.getElementById('aiO');
-  r.classList.add('v');t.style.display='flex';o.classList.remove('v');o.innerHTML='';
+function ctx(){
+  const d5=Object.entries(F).sort(([,a],[,b])=>b.d-a.d).slice(0,5).map(([n])=>n).join(',');
+  const m5=Object.entries(F).sort(([,a],[,b])=>b.m-a.m).slice(0,5).map(([n])=>n).join(',');
+  const c5=Object.entries(F).sort(([,a],[,b])=>a.tot-b.tot).slice(0,5).map(([n])=>n).join(',');
+  return` [Digital:${d5} | Machine:${m5} | Retard:${c5} | Dernier:${T[0].b.join(',')}]`;
+}
+
+function qAI(t){
+  const qs={
+    digital:`Génère 5 numéros pour le tirage Digital Loto Bonheur LONACI CI. Justifie.${ctx()}`,
+    machine:`Génère 5 numéros pour le tirage Machine LONACI CI. Justifie.${ctx()}`,
+    turbo:`1 numéro Turbo Loto CI (1-90). Justifie.${ctx()}`,
+    p2:`2 numéros Pari 2 Loto Bonheur. Justifie.${ctx()}`,
+    p3:`3 numéros Pari 3 Loto Bonheur. Justifie.${ctx()}`,
+    stats:`Analyse tendances Loto Bonheur LONACI: chauds, froids, retardataires. Conseils.${ctx()}`
+  };
+  document.getElementById('aiInp').value=qs[t];
+  doAI();
+}
+
+async function doAI(){
+  const q=document.getElementById('aiInp').value.trim();if(!q)return;
+  document.getElementById('aiWait').style.display='block';
+  document.getElementById('aiAns').classList.remove('v');
+  document.getElementById('aiAns').innerHTML='';
   try{
-    const res=await fetch("https://api.anthropic.com/v1/messages",{method:"POST",headers:{"Content-Type":"application/json"},
-      body:JSON.stringify({model:"claude-sonnet-4-20250514",max_tokens:1000,
-        system:"Tu es expert Loto Bonheur LONACI Côte d'Ivoire. Grille 1-90. Tirages Digital et Machine. Paris: Turbo,Pari 2/3/4. Donne numéros précis avec justification. Rappelle que c'est un jeu de hasard. En français.",
-        messages:[{role:"user",content:q}]})});
-    const d=await res.json();
-    t.style.display='none';
-    o.innerHTML=(d.content?.[0]?.text||"Indisponible.").replace(/\n/g,'<br>');
-    o.classList.add('v');
-  }catch(e){t.style.display='none';o.innerHTML='⚠️ Erreur: '+e.message;o.classList.add('v');}
-  inp.value='';
+    const r=await fetch("https://api.anthropic.com/v1/messages",{
+      method:"POST",
+      headers:{"Content-Type":"application/json"},
+      body:JSON.stringify({
+        model:"claude-sonnet-4-20250514",
+        max_tokens:800,
+        system:"Tu es expert Loto Bonheur LONACI Côte d'Ivoire. Grille 1-90. Tirages Digital et Machine. Paris: Turbo, Pari 2/3/4. Donne des numéros précis avec justification courte. Rappelle que c'est un jeu de hasard. Réponds en français.",
+        messages:[{role:"user",content:q}]
+      })
+    });
+    const d=await r.json();
+    document.getElementById('aiWait').style.display='none';
+    document.getElementById('aiAns').innerHTML=(d.content?.[0]?.text||"Indisponible.").replace(/\n/g,'<br>');
+    document.getElementById('aiAns').classList.add('v');
+  }catch(e){
+    document.getElementById('aiWait').style.display='none';
+    document.getElementById('aiAns').innerHTML='⚠️ Erreur: '+e.message;
+    document.getElementById('aiAns').classList.add('v');
+  }
+  document.getElementById('aiInp').value='';
 }
 
 document.getElementById('aiInp').addEventListener('keydown',e=>{
-  if(e.key==='Enter'&&!e.shiftKey){e.preventDefault();askAI();}
+  if(e.key==='Enter'&&!e.shiftKey){e.preventDefault();doAI();}
 });
 
-// Tout initialiser
-renderTirages();
-renderMatrice();
-renderProno();
-renderTurbo();
-renderStats();
+// INIT
+rRes();rMat();rPro();rTrb();rSta();
 </script>
 </body>
 </html>
