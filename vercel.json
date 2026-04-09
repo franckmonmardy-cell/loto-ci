@@ -1,10 +1,17 @@
 
 {
   "version": 2,
-  "builds": [
-    { "src": "index.html", "use": "@vercel/static" }
-  ],
+  "functions": {
+    "api/*.js": {
+      "runtime": "nodejs18.x"
+    }
+  },
   "routes": [
-    { "src": "/(.*)", "dest": "/index.html" }
+    { "src": "/api/(.*)", "dest": "/api/$1" },
+    { "src": "/pmu", "dest": "/pmu.html" },
+    { "src": "/loto", "dest": "/loto.html" },
+    { "src": "/sw.js", "dest": "/sw.js" },
+    { "src": "/manifest.json", "dest": "/manifest.json" },
+    { "src": "/", "dest": "/index.html" }
   ]
 }
